@@ -15,6 +15,7 @@ dependencies:
   # Gerenciador de estados
   bloc: ^8.1.1
   flutter_bloc: ^8.1.2
+
   # Back4app
   parse_server_sdk_flutter: ^4.0.0
   # pdf

@@ -73,10 +73,10 @@ class UserProfileEntity {
         .toList();
   }
 
-  Future<UserProfileModel> toModel(
+  UserProfileModel toModel(
     ParseObject parseObject, [
     List<String> cols = const [],
-  ]) async {
+  ]) {
     UserProfileModel model = UserProfileModel(
       id: parseObject.objectId!,
       email: parseObject.get(UserProfileEntity.email),
