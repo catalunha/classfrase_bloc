@@ -17,15 +17,40 @@ class PhraseList extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<CatClassBloc>().state.categoryAll;
 
-    return SingleChildScrollView(
-      child: BlocBuilder<PhraseListBloc, PhraseListState>(
-        builder: (context, state) {
-          return Column(
-            children: state.isSortedByFolder
-                ? buildPhraseListOrderedByFolder(context, state.list)
-                : buildPhraseListOrderedByAlpha(context, state.list),
+    return BlocListener<PhraseListBloc, PhraseListState>(
+      listenWhen: (previous, current) {
+        return previous.status != current.status;
+      },
+      listener: (context, state) async {
+        if (state.status == PhraseListStateStatus.error) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(state.error ?? '...')));
+        }
+        if (state.status == PhraseListStateStatus.success) {
+          Navigator.of(context).pop();
+        }
+        if (state.status == PhraseListStateStatus.loading) {
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return const Center(child: CircularProgressIndicator());
+            },
           );
-        },
+        }
+      },
+      child: SingleChildScrollView(
+        child: BlocBuilder<PhraseListBloc, PhraseListState>(
+          builder: (context, state) {
+            return Column(
+              children: state.isSortedByFolder
+                  ? buildPhraseListOrderedByFolder(context, state.list)
+                  : buildPhraseListOrderedByAlpha(context, state.list),
+            );
+          },
+        ),
       ),
     );
   }
