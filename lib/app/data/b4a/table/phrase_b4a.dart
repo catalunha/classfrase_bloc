@@ -15,6 +15,7 @@ class PhraseB4a {
     query.setLimit(pagination.limit);
     query.keysToReturn([
       ...PhraseEntity.filterSingleCols(cols),
+      ...PhraseEntity.filterPointerCols(cols),
     ]);
     query.includeObject(PhraseEntity.filterPointerCols(cols));
 
@@ -31,14 +32,9 @@ class PhraseB4a {
       parseResponse = await query2.query();
       List<PhraseModel> listTemp = <PhraseModel>[];
       if (parseResponse.success && parseResponse.results != null) {
-        print('==>1==> ${parseResponse.results!.length}');
         for (var element in parseResponse.results!) {
-          var a = element as ParseObject;
-          print('obj: $a');
           listTemp.add(PhraseEntity().toModel(element, cols));
         }
-        print('==>2==> ${listTemp.length}');
-
         return listTemp;
       } else {
         return [];

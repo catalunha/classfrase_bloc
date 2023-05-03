@@ -85,7 +85,7 @@ class PhraseEntity {
   }
 
   PhraseModel toModel(ParseObject parseObject, [List<String> cols = const []]) {
-    print('PhraseModel.toModel: 1');
+    print('PhraseModel.toModel:');
     Map<String, Classification>? classifications = <String, Classification>{};
     Map<String, dynamic>? tempClass =
         parseObject.get<Map<String, dynamic>>(PhraseEntity.classifications);
@@ -94,10 +94,6 @@ class PhraseEntity {
         classifications[item.key] = Classification.fromMap(item.value);
       }
     }
-    print('PhraseModel.toModel: 2');
-    print(
-        'PhraseModel.toModel.phrase: ${parseObject.get<String>(PhraseEntity.phrase)}');
-    print('PhraseModel.toModel: ${parseObject.get(PhraseEntity.userProfile)}');
 
     PhraseModel model = PhraseModel(
       id: parseObject.objectId!,
