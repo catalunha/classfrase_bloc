@@ -7,6 +7,7 @@ import '../../../../core/models/phrase_model.dart';
 import '../../../utils/app_icon.dart';
 import '../../../utils/app_link.dart';
 import '../bloc/phrase_list_bloc.dart';
+import '../bloc/phrase_list_event.dart';
 import '../bloc/phrase_list_state.dart';
 import 'phrase_card.dart';
 
@@ -182,6 +183,13 @@ class PhraseList extends StatelessWidget {
             icon: const Icon(AppIconData.edit),
             onPressed: () {
               //  _phraseController.edit(phrase.id!),
+            }),
+        IconButton(
+            tooltip: 'Arquivar esta frase',
+            icon: const Icon(AppIconData.inbox),
+            onPressed: () {
+              context.read<PhraseListBloc>().add(PhraseListEventIsArchived(
+                  phraseId: phrase.id!, isArchived: true));
             }),
       ],
     );

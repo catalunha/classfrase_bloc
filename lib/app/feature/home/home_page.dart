@@ -9,6 +9,7 @@ import '../../core/repositories/phrase_repository.dart';
 import '../phrase/list/bloc/phrase_list_bloc.dart';
 import '../phrase/list/bloc/phrase_list_event.dart';
 import '../phrase/list/comp/phrase_list.dart';
+import '../phrase/list/phases_archived_page.dart';
 import '../utils/app_icon.dart';
 import 'comp/home_popmenu.dart';
 
@@ -138,7 +139,19 @@ class HomeView extends StatelessWidget {
               IconButton(
                 tooltip: 'Minhas frases arquivadas',
                 icon: const Icon(AppIconData.box),
-                onPressed: () {},
+                onPressed: () {
+                  context
+                      .read<PhraseListBloc>()
+                      .add(PhraseListEventStartList(isArchived: true));
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: BlocProvider.of<PhraseListBloc>(context),
+                        child: const PhrasesArchivedPage(),
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),

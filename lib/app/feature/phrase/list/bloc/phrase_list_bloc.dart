@@ -24,6 +24,7 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
     on<PhraseListEventStartList>(_onPhraseListEventStartList);
     on<PhraseListEventSortAlpha>(_onPhraseListEventSortAlpha);
     on<PhraseListEventSortFolder>(_onPhraseListEventSortFolder);
+    on<PhraseListEventIsArchived>(_onPhraseListEventIsArchived);
     add(PhraseListEventStartList());
   }
   final List<String> cols = [
@@ -44,7 +45,7 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
           PhraseEntity.userProfile,
           (ParseObject(UserProfileEntity.className)..objectId = _userProfile.id)
               .toPointer());
-      query.whereEqualTo(PhraseEntity.isArchived, false);
+      query.whereEqualTo(PhraseEntity.isArchived, event.isArchived);
 
       query.orderByAscending(PhraseEntity.folder);
       List<PhraseModel> listGet = await _repository.list(
@@ -74,5 +75,11 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
   FutureOr<void> _onPhraseListEventSortFolder(
       PhraseListEventSortFolder event, Emitter<PhraseListState> emit) {
     emit(state.copyWith(isSortedByFolder: true));
+  }
+
+  FutureOr<void> _onPhraseListEventIsArchived(
+      PhraseListEventIsArchived event, Emitter<PhraseListState> emit) async {
+    await _repository.updateIsArchive(event.phraseId, event.isArchived);
+    add(PhraseListEventStartList());
   }
 }
