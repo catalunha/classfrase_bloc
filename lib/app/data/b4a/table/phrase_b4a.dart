@@ -16,6 +16,7 @@ class PhraseB4a {
     query.keysToReturn([
       ...PhraseEntity.filterSingleCols(cols),
       ...PhraseEntity.filterPointerCols(cols),
+      ...PhraseEntity.filterRelationCols(cols),
     ]);
     query.includeObject(PhraseEntity.filterPointerCols(cols));
 

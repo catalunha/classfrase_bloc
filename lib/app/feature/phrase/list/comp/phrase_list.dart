@@ -25,23 +25,24 @@ class PhraseList extends StatelessWidget {
         },
       ),
     );
-    // return SingleChildScrollView(
-    //   child: Obx(() => Column(
-    //         children: buildPhraseList(context),
-    //       )),
-    // );
   }
 
   List<Widget> buildPhraseListOrderedByFolder(
       context, List<PhraseModel> phraseList) {
-    List<Widget> list = [];
+    List<Widget> listCard = [];
     List<Widget> listExpansionTile = [];
+    List<PhraseModel> phraseTemp = [];
     String folder = '';
     if (phraseList.isNotEmpty) {
       folder = phraseList.first.folder;
     }
-    for (var phrase in phraseList) {
-      if (phrase.folder != folder) {
+    for (var phrase1 in phraseList) {
+      if (phrase1.folder != folder) {
+        phraseTemp.sort((a, b) => a.phrase.compareTo(b.phrase));
+        for (var phrase2 in phraseTemp) {
+          listCard.add(phraseCardWidget(phrase2, context));
+        }
+
         listExpansionTile.add(
           Card(
             shape: RoundedRectangleBorder(
@@ -51,15 +52,17 @@ class PhraseList extends StatelessWidget {
             child: ExpansionTile(
               title: Text(folder),
               children: [
-                ...list,
+                ...listCard,
               ],
             ),
           ),
         );
-        list.clear();
-        folder = phrase.folder;
+        listCard.clear();
+        phraseTemp.clear();
+        folder = phrase1.folder;
       }
-      list.add(phraseCardWidget(phrase, context));
+      // listCard.add(phraseCardWidget(phrase, context));
+      phraseTemp.add(phrase1);
     }
     if (phraseList.isNotEmpty) {
       listExpansionTile.add(
@@ -71,14 +74,14 @@ class PhraseList extends StatelessWidget {
           child: ExpansionTile(
             title: Text(folder),
             children: [
-              ...list,
+              ...listCard,
             ],
           ),
         ),
       );
     }
     if (listExpansionTile.isEmpty) {
-      list.add(listEmpty());
+      listCard.add(listEmpty());
     }
     return listExpansionTile;
   }
@@ -93,8 +96,9 @@ class PhraseList extends StatelessWidget {
   List<Widget> buildPhraseListOrderedByAlpha(
       context, List<PhraseModel> phraseList) {
     List<Widget> list = [];
-
-    for (var phrase in phraseList) {
+    List<PhraseModel> tem = [...phraseList];
+    tem.sort((a, b) => a.phrase.compareTo(b.phrase));
+    for (var phrase in tem) {
       list.add(phraseCardWidget(phrase, context));
     }
 

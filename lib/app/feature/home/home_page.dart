@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/authentication/bloc/authentication_bloc.dart';
+import '../../core/category_classification/bloc/cat_class_bloc.dart';
+import '../../core/models/phrase_model.dart';
 import '../../core/models/user_profile_model.dart';
 import '../../core/repositories/phrase_repository.dart';
 import '../phrase/list/bloc/phrase_list_bloc.dart';
+import '../phrase/list/bloc/phrase_list_event.dart';
 import '../phrase/list/comp/phrase_list.dart';
 import '../utils/app_icon.dart';
 import 'comp/home_popmenu.dart';
@@ -21,16 +24,22 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider(
       create: (context) => PhraseRepository(),
-      child: BlocProvider(
-        lazy: false,
-        create: (context) {
-          UserProfileModel userProfile =
-              context.read<AuthenticationBloc>().state.user!.profile!;
-          return PhraseListBloc(
-            repository: RepositoryProvider.of<PhraseRepository>(context),
-            userProfile: userProfile,
-          );
-        },
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) {
+              UserProfileModel userProfile =
+                  context.read<AuthenticationBloc>().state.user!.profile!;
+              return PhraseListBloc(
+                repository: RepositoryProvider.of<PhraseRepository>(context),
+                userProfile: userProfile,
+              );
+            },
+          ),
+          BlocProvider(
+            create: (context) => CatClassBloc(),
+          ),
+        ],
         child: const HomeView(),
       ),
     );
@@ -96,34 +105,35 @@ class HomeView extends StatelessWidget {
             ),
           ),
           Wrap(
-            // alignment: WrapAlignment.start,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              // const Text(
-              //   textAlign: TextAlign.left,
-              //   'Minhas frases',
-              // ),
               IconButton(
                 tooltip: 'Ordem alfabética das frases',
                 icon: const Icon(AppIconData.sortAlpha),
-                onPressed: () {},
-                // icon: Obx(() => Icon(
-                //       AppIconData.sortAlpha,
-                //       color: !widget._phraseController.isSortedByFolder.value
-                //           ? Colors.green
-                //           : Colors.black,
-                //     )),
-                // onPressed: () => widget._phraseController.sortByFolder(false),
+                onPressed: () {
+                  context
+                      .read<PhraseListBloc>()
+                      .add(PhraseListEventSortAlpha());
+                },
               ),
               IconButton(
                 tooltip: 'Ordem por folder das frases',
                 icon: const Icon(AppIconData.sortFolder),
-                onPressed: () {},
+                onPressed: () {
+                  context
+                      .read<PhraseListBloc>()
+                      .add(PhraseListEventSortFolder());
+                },
               ),
               IconButton(
                 tooltip: 'PDF de todas as frases',
                 icon: const Icon(AppIconData.print),
-                onPressed: () {},
+                onPressed: () {
+                  List<PhraseModel> phraseList =
+                      context.read<PhraseListBloc>().state.list;
+                  Navigator.of(context)
+                      .pushNamed('/pdf/all', arguments: phraseList);
+                },
               ),
               IconButton(
                 tooltip: 'Minhas frases arquivadas',

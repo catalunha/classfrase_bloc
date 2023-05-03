@@ -22,8 +22,9 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
         _repository = repository,
         super(PhraseListState.initial()) {
     on<PhraseListEventStartList>(_onPhraseListEventStartList);
+    on<PhraseListEventSortAlpha>(_onPhraseListEventSortAlpha);
+    on<PhraseListEventSortFolder>(_onPhraseListEventSortFolder);
     add(PhraseListEventStartList());
-    print('=====================1>');
   }
   final List<String> cols = [
     ...PhraseEntity.singleCols,
@@ -31,7 +32,6 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
   ];
   FutureOr<void> _onPhraseListEventStartList(
       PhraseListEventStartList event, Emitter<PhraseListState> emit) async {
-    print('=====================2>');
     emit(state.copyWith(
       status: PhraseListStateStatus.loading,
       list: [],
@@ -47,13 +47,11 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
       query.whereEqualTo(PhraseEntity.isArchived, false);
 
       query.orderByAscending(PhraseEntity.folder);
-      print('------------> listGet: 0');
       List<PhraseModel> listGet = await _repository.list(
         query,
-        Pagination(page: 1, limit: 10),
+        Pagination(page: 1, limit: 500),
         cols,
       );
-      print('------------> listGet: ${listGet.length}');
       emit(state.copyWith(
         status: PhraseListStateStatus.success,
         list: listGet,
@@ -66,5 +64,15 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
             error: 'Erro na montagem da busca'),
       );
     }
+  }
+
+  FutureOr<void> _onPhraseListEventSortAlpha(
+      PhraseListEventSortAlpha event, Emitter<PhraseListState> emit) {
+    emit(state.copyWith(isSortedByFolder: false));
+  }
+
+  FutureOr<void> _onPhraseListEventSortFolder(
+      PhraseListEventSortFolder event, Emitter<PhraseListState> emit) {
+    emit(state.copyWith(isSortedByFolder: true));
   }
 }

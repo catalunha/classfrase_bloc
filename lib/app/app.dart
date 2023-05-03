@@ -4,11 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/authentication/authentication.dart';
+import 'core/models/phrase_model.dart';
 import 'core/models/user_model.dart';
 import 'core/models/user_profile_model.dart';
 import 'core/repositories/user_repository.dart';
 import 'data/b4a/table/user_b4a.dart';
 import 'feature/home/home_page.dart';
+import 'feature/pdf/pdf_all_page.dart';
 import 'feature/splash/splash_page.dart';
 import 'feature/user/login/login_page.dart';
 import 'feature/user/register/email/user_register_email.page.dart';
@@ -76,7 +78,7 @@ class _AppViewState extends State<AppView> {
     return MaterialApp(
       scrollBehavior: MyCustomScrollBehavior(),
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(useMaterial3: true),
+      theme: ThemeData.light(useMaterial3: true),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -129,6 +131,16 @@ class _AppViewState extends State<AppView> {
 
           return UserProfileSelectPage(
             isSingleValue: isSingleValue,
+          );
+        },
+        '/pdf/all': (context) {
+          List<PhraseModel>? phraseList =
+              ModalRoute.of(context)!.settings.arguments as List<PhraseModel>?;
+          UserProfileModel userProfile =
+              context.read<AuthenticationBloc>().state.user!.profile!;
+          return PdfAllPhrasesPage(
+            phraseList: phraseList ?? [],
+            userProfile: userProfile,
           );
         },
       },
