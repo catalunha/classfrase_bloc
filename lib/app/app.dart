@@ -11,6 +11,7 @@ import 'core/repositories/user_repository.dart';
 import 'data/b4a/table/user_b4a.dart';
 import 'feature/home/home_page.dart';
 import 'feature/pdf/pdf_all_page.dart';
+import 'feature/pdf/pdf_page.dart';
 import 'feature/splash/splash_page.dart';
 import 'feature/user/login/login_page.dart';
 import 'feature/user/register/email/user_register_email.page.dart';
@@ -141,6 +142,15 @@ class _AppViewState extends State<AppView> {
           return PdfAllPhrasesPage(
             phraseList: phraseList ?? [],
             userProfile: userProfile,
+          );
+        },
+        '/pdf': (context) {
+          Map<String, dynamic>? map = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>?;
+
+          return PdfPhrasePage(
+            phrase: map!['phrase'],
+            categoryAll: map['categoryAll'],
           );
         },
       },

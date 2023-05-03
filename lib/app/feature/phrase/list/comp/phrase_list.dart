@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/category_classification/bloc/cat_class_bloc.dart';
 import '../../../../core/models/phrase_model.dart';
 import '../../../utils/app_icon.dart';
 import '../../../utils/app_link.dart';
@@ -14,6 +15,8 @@ class PhraseList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<CatClassBloc>().state.categoryAll;
+
     return SingleChildScrollView(
       child: BlocBuilder<PhraseListBloc, PhraseListState>(
         builder: (context, state) {
@@ -28,7 +31,7 @@ class PhraseList extends StatelessWidget {
   }
 
   List<Widget> buildPhraseListOrderedByFolder(
-      context, List<PhraseModel> phraseList) {
+      BuildContext context, List<PhraseModel> phraseList) {
     List<Widget> listCard = [];
     List<Widget> listExpansionTile = [];
     List<PhraseModel> phraseTemp = [];
@@ -94,7 +97,7 @@ class PhraseList extends StatelessWidget {
   }
 
   List<Widget> buildPhraseListOrderedByAlpha(
-      context, List<PhraseModel> phraseList) {
+      BuildContext context, List<PhraseModel> phraseList) {
     List<Widget> list = [];
     List<PhraseModel> tem = [...phraseList];
     tem.sort((a, b) => a.phrase.compareTo(b.phrase));
@@ -108,7 +111,7 @@ class PhraseList extends StatelessWidget {
     return list;
   }
 
-  Widget phraseCardWidget(PhraseModel phrase, context) {
+  Widget phraseCardWidget(PhraseModel phrase, BuildContext context) {
     return PhraseCard(
       key: ValueKey(phrase),
       phrase: phrase,
@@ -124,7 +127,10 @@ class PhraseList extends StatelessWidget {
           tooltip: 'PDF da classificação desta frase.',
           icon: const Icon(AppIconData.print),
           onPressed: () {
-            // Get.toNamed(Routes.pdf, arguments: phrase);
+            Navigator.of(context).pushNamed('/pdf', arguments: {
+              'phrase': phrase,
+              'categoryAll': context.read<CatClassBloc>().state.categoryAll,
+            });
           },
         ),
         AppLink(

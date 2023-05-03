@@ -142,9 +142,15 @@ class HomeView extends StatelessWidget {
               ),
             ],
           ),
-          const Expanded(
-            child: PhraseList(),
+          Expanded(
+            child: BlocProvider.value(
+              value: BlocProvider.of<CatClassBloc>(context),
+              child: const PhraseList(),
+            ),
           ),
+          // const Expanded(
+          //   child: PhraseList(),
+          // ),
         ],
       ),
     );

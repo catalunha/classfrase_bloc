@@ -1,18 +1,22 @@
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+import '../../core/models/catclass_model.dart';
 import '../../core/models/phrase_classification_model.dart';
 import '../../core/models/phrase_model.dart';
 
-class PdfPage extends StatelessWidget {
+class PdfPhrasePage extends StatelessWidget {
   final PhraseModel phrase;
-  const PdfPage({
+  final List<CatClassModel> categoryAll;
+  const PdfPhrasePage({
     Key? key,
     required this.phrase,
+    required this.categoryAll,
   }) : super(key: key);
 
   @override
@@ -21,12 +25,16 @@ class PdfPage extends StatelessWidget {
       appBar: AppBar(title: const Text('ClassFrase em PDF')),
       body: PdfPreview(
         pdfFileName: phrase.phrase,
-        build: (format) => _generatePdf(format, 'ClassFrase em PDF'),
+        build: (format) => _generatePdf(format, 'ClassFrase em PDF', context),
+        canDebug: false,
+        canChangeOrientation: false,
+        canChangePageFormat: false,
       ),
     );
   }
 
-  Future<Uint8List> _generatePdf(PdfPageFormat format, String title) async {
+  Future<Uint8List> _generatePdf(
+      PdfPageFormat format, String title, BuildContext context1) async {
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
     // final font1 = await PdfGoogleFonts.openSansRegular();
     // final font2 = await PdfGoogleFonts.openSansBold();
@@ -62,7 +70,7 @@ class PdfPage extends StatelessWidget {
             style: const pw.TextStyle(fontSize: 10),
           ),
           header('Classificações:'),
-          ...buildClassByLine(context),
+          ...buildClassByLine(context1),
           header('Diagrama:'),
           phrase.diagramUrl != null && phrase.diagramUrl!.isNotEmpty
               ? pw.Row(
@@ -71,8 +79,8 @@ class PdfPage extends StatelessWidget {
                       'Para ver o diagrama online consulte: ',
                       style: const pw.TextStyle(fontSize: 10),
                     ),
-                    _UrlText(phrase.diagramUrl ?? 'Sem diagrama.',
-                        phrase.diagramUrl ?? 'Sem diagrama'),
+                    _UrlText(
+                        'Clique aqui', phrase.diagramUrl ?? 'Sem diagrama'),
                     // _UrlText('clique aqui.', phrase.diagramUrl!),
                   ],
                 )
@@ -167,7 +175,7 @@ class PdfPage extends StatelessWidget {
     );
   }
 
-  List<pw.Widget> buildClassByLine(context) {
+  List<pw.Widget> buildClassByLine(BuildContext context) {
     List<pw.Widget> lineList = [];
 
     for (var classId in phrase.classOrder) {
@@ -200,10 +208,12 @@ class PdfPage extends StatelessWidget {
       List<pw.Widget> categoryWidgetList = [];
       List<String> categoryIdList = classification.categoryIdList;
       List<String> classOrdemList = [];
-      ClassificationService classificationService = Get.find();
+      // List<CatClassModel> categoryAll =
+      //     context.read<CatClassBloc>().state.categoryAll;
+
       for (var id in categoryIdList) {
-        CatClassModel? catClassModel = classificationService.categoryAll
-            .firstWhereOrNull((catClass) => catClass.id == id);
+        CatClassModel? catClassModel =
+            categoryAll.firstWhereOrNull((catClass) => catClass.id == id);
         if (catClassModel != null) {
           classOrdemList.add(catClassModel.ordem);
         }
