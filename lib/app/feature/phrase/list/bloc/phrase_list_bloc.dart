@@ -25,6 +25,10 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
     on<PhraseListEventSortAlpha>(_onPhraseListEventSortAlpha);
     on<PhraseListEventSortFolder>(_onPhraseListEventSortFolder);
     on<PhraseListEventIsArchived>(_onPhraseListEventIsArchived);
+    on<PhraseListEventAddToList>(_onPhraseListEventAddToList);
+
+    on<PhraseListEventUpdateList>(_onPhraseListEventUpdateList);
+    on<PhraseListEventRemoveFromList>(_onPhraseListEventRemoveFromList);
     add(PhraseListEventStartList());
   }
   final List<String> cols = [
@@ -81,5 +85,33 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
       PhraseListEventIsArchived event, Emitter<PhraseListState> emit) async {
     await _repository.updateIsArchive(event.phraseId, event.isArchived);
     add(PhraseListEventStartList());
+  }
+
+  FutureOr<void> _onPhraseListEventAddToList(
+      PhraseListEventAddToList event, Emitter<PhraseListState> emit) {
+    List<PhraseModel> listTemp = [...state.list];
+    listTemp.add(event.model);
+    listTemp.sort((a, b) => a.folder.compareTo(b.folder));
+    emit(state.copyWith(list: listTemp));
+  }
+
+  FutureOr<void> _onPhraseListEventUpdateList(
+      PhraseListEventUpdateList event, Emitter<PhraseListState> emit) {
+    int index = state.list.indexWhere((model) => model.id == event.model.id);
+    if (index >= 0) {
+      List<PhraseModel> listTemp = [...state.list];
+      listTemp.replaceRange(index, index + 1, [event.model]);
+      emit(state.copyWith(list: listTemp));
+    }
+  }
+
+  FutureOr<void> _onPhraseListEventRemoveFromList(
+      PhraseListEventRemoveFromList event, Emitter<PhraseListState> emit) {
+    int index = state.list.indexWhere((model) => model.id == event.modelId);
+    if (index >= 0) {
+      List<PhraseModel> listTemp = [...state.list];
+      listTemp.removeAt(index);
+      emit(state.copyWith(list: listTemp));
+    }
   }
 }

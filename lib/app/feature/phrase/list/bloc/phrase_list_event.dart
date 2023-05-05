@@ -1,3 +1,5 @@
+import '../../../../core/models/phrase_model.dart';
+
 abstract class PhraseListEvent {}
 
 class PhraseListEventStartList extends PhraseListEvent {
@@ -18,4 +20,25 @@ class PhraseListEventIsArchived extends PhraseListEvent {
     required this.phraseId,
     required this.isArchived,
   });
+}
+
+class PhraseListEventAddToList extends PhraseListEvent {
+  final PhraseModel model;
+  PhraseListEventAddToList(
+    this.model,
+  );
+}
+
+class PhraseListEventUpdateList extends PhraseListEvent {
+  final PhraseModel model;
+  PhraseListEventUpdateList(
+    this.model,
+  );
+}
+
+class PhraseListEventRemoveFromList extends PhraseListEvent {
+  final String modelId;
+  PhraseListEventRemoveFromList(
+    this.modelId,
+  );
 }

@@ -12,6 +12,7 @@ import 'data/b4a/table/user_b4a.dart';
 import 'feature/home/home_page.dart';
 import 'feature/pdf/pdf_all_page.dart';
 import 'feature/pdf/pdf_page.dart';
+import 'feature/phrase/save/phrase_save_page.dart';
 import 'feature/splash/splash_page.dart';
 import 'feature/user/login/login_page.dart';
 import 'feature/user/register/email/user_register_email.page.dart';
@@ -79,7 +80,7 @@ class _AppViewState extends State<AppView> {
     return MaterialApp(
       scrollBehavior: MyCustomScrollBehavior(),
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(useMaterial3: true),
+      theme: ThemeData.dark(useMaterial3: true),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -152,6 +153,11 @@ class _AppViewState extends State<AppView> {
             phrase: map!['phrase'],
             categoryAll: map['categoryAll'],
           );
+        },
+        '/phrase/save': (context) {
+          PhraseModel? phase =
+              ModalRoute.of(context)!.settings.arguments as PhraseModel?;
+          return PhraseSavePage(model: phase);
         },
       },
       initialRoute: '/',

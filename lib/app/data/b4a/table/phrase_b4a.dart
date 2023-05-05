@@ -128,6 +128,7 @@ class PhraseB4a {
   Future<void> updateIsArchive(String id, bool mode) async {
     var parseObject = ParseObject(PhraseEntity.className)..objectId = id;
     parseObject.set('isArchived', mode);
+    parseObject.set('isPublic', false);
     await parseObject.save();
   }
 

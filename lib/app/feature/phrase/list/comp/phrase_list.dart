@@ -1,3 +1,4 @@
+import 'package:classfrase_bloc/app/feature/phrase/save/phrase_save_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -182,7 +183,17 @@ class PhraseList extends StatelessWidget {
             tooltip: 'Editar esta frase',
             icon: const Icon(AppIconData.edit),
             onPressed: () {
-              //  _phraseController.edit(phrase.id!),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<PhraseListBloc>(context),
+                    child: PhraseSavePage(model: phrase),
+                  ),
+                ),
+              );
+
+              // Navigator.of(context)
+              //     .pushNamed('/phrase/save', arguments: phrase);
             }),
         IconButton(
             tooltip: 'Arquivar esta frase',
