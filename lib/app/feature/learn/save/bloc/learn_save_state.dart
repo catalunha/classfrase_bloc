@@ -1,6 +1,6 @@
 import '../../../../core/models/learn_model.dart';
 
-enum LearnSaveStateStatus { initial, loading, success, error }
+enum LearnSaveStateStatus { initial, loading, success, error, delete }
 
 class LearnSaveState {
   final LearnSaveStateStatus status;

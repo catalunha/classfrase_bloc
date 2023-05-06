@@ -60,7 +60,7 @@ class LearnSaveBloc extends Bloc<LearnSaveEvent, LearnSaveState> {
     try {
       emit(state.copyWith(status: LearnSaveStateStatus.loading));
       await _learnRepository.delete(state.model!.id!);
-      emit(state.copyWith(status: LearnSaveStateStatus.success));
+      emit(state.copyWith(status: LearnSaveStateStatus.delete));
     } catch (e) {
       emit(state.copyWith(
           status: LearnSaveStateStatus.error,
