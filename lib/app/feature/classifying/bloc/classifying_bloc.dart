@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../../../core/models/phrase_classification_model.dart';
 import '../../../core/models/phrase_model.dart';
 import '../../../core/repositories/phrase_repository.dart';
+import '../../../data/b4a/entity/phrase_entity.dart';
 import 'classifying_event.dart';
 import 'classifying_state.dart';
 
@@ -31,7 +32,10 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
     on<ClassifyingEventOnSaveClassification>(
         _onClassifyingEventOnSaveClassification);
   }
-
+  final List<String> cols = [
+    ...PhraseEntity.singleCols,
+    ...PhraseEntity.pointerCols,
+  ];
   FutureOr<void> _onClassifyingEventOnChangeClassOrder(
       ClassifyingEventOnChangeClassOrder event,
       Emitter<ClassifyingState> emit) async {
@@ -147,7 +151,7 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
       }
       await _repository.updateClassification(
           state.model.id!, classificationsTemp, classOrderTemp);
-      PhraseModel? temp = await _repository.readById(state.model.id!);
+      PhraseModel? temp = await _repository.readById(state.model.id!, cols);
       emit(state.copyWith(model: temp, status: ClassifyingStateStatus.success));
     } catch (e) {
       emit(state.copyWith(
