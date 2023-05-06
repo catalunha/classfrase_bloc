@@ -29,7 +29,7 @@ class PdfOneBloc extends Bloc<PdfOneEvent, PdfOneState> {
     print('Staaaaaaaarting....');
     emit(state.copyWith(status: PdfOneStateStatus.loading));
     try {
-      PhraseModel? temp = await _repository.readById(state.model!.id!, cols);
+      PhraseModel? temp = await _repository.readById(state.model.id!, cols);
       emit(state.copyWith(
         model: temp,
         status: PdfOneStateStatus.success,
