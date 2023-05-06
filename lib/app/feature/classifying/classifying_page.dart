@@ -8,6 +8,7 @@ import '../../core/repositories/phrase_repository.dart';
 import 'bloc/classifying_bloc.dart';
 import 'bloc/classifying_event.dart';
 import 'bloc/classifying_state.dart';
+import 'categories_page.dart';
 import 'utils/utils.dart';
 
 class ClassifyingPage extends StatelessWidget {
@@ -127,7 +128,14 @@ class _ClassifyingViewState extends State<ClassifyingView> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => BlocProvider.value(
-                      value: BlocProvider.of<PhraseListBloc>(context),
+                      value: BlocProvider.of<ClassifyingBloc>(context),
+                      child: BlocProvider.value(
+                        value: BlocProvider.of<PhraseListBloc>(context),
+                        child: BlocProvider.value(
+                          value: BlocProvider.of<CatClassBloc>(context),
+                          child: const CategoriesPage(),
+                        ),
+                      ),
                     ),
                   ),
                 );

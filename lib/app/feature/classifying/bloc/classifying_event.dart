@@ -22,3 +22,10 @@ class ClassifyingEventOnChangeClassOrder extends ClassifyingEvent {
 
 class ClassifyingEventOnMarkCategoryIfAlreadyClassifiedInPos
     extends ClassifyingEvent {}
+
+class ClassifyingEventOnSelectCategory extends ClassifyingEvent {
+  final String categoryId;
+  ClassifyingEventOnSelectCategory(this.categoryId);
+}
+
+class ClassifyingEventOnSaveClassification extends ClassifyingEvent {}

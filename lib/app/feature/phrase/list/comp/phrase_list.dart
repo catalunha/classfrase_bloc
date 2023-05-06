@@ -154,8 +154,11 @@ class PhraseList extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => BlocProvider.value(
-                    value: BlocProvider.of<CatClassBloc>(context),
-                    child: ClassifyingPage(model: phrase),
+                    value: BlocProvider.of<PhraseListBloc>(context),
+                    child: BlocProvider.value(
+                      value: BlocProvider.of<CatClassBloc>(context),
+                      child: ClassifyingPage(model: phrase),
+                    ),
                   ),
                 ),
               );

@@ -30,7 +30,7 @@ class CatClassBloc extends Bloc<CatClassEvent, CatClassState> {
     }
     emit(state.copyWith(categoryAll: temp));
 
-    add(CatClassEventFilterBy(filter: 'ngb'));
+    add(CatClassEventFilterBy('ngb'));
   }
 
   Future<dynamic> _loadJsonCategory() async {

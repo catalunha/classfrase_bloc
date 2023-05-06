@@ -92,7 +92,7 @@ class PhraseB4a {
         return PhraseEntity().toModel(response.results!.first, cols);
       }
       throw B4aException(
-        'Perfil do usuário não encontrado.',
+        'Frase não encontrada.',
         where: 'PhraseRepositoryB4a.readById()',
       );
     } catch (_) {

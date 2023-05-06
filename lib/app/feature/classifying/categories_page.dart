@@ -1,5 +1,16 @@
+import 'package:classfrase_bloc/app/feature/classifying/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
+
+import '../../core/category_classification/bloc/cat_class_bloc.dart';
+import '../../core/category_classification/bloc/cat_class_event.dart';
+import '../../core/category_classification/bloc/cat_class_state.dart';
+import '../../core/models/catclass_model.dart';
+import '../utils/app_icon.dart';
+import 'bloc/classifying_bloc.dart';
+import 'bloc/classifying_event.dart';
+import 'bloc/classifying_state.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({
@@ -16,7 +27,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Escolhendo classificação'),
+        title: const Text('Escolhendo a classificação'),
       ),
       body: Column(
         children: [
@@ -28,9 +39,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   style: const TextStyle(fontSize: 28, color: Colors.black),
                   children: buildPhrase(
                     context: context,
-                    phraseList: widget._classifyingController.phrase.phraseList,
-                    selectedPhrasePosList:
-                        widget._classifyingController.selectedPosPhraseList,
+                    phraseList:
+                        context.read<ClassifyingBloc>().state.model.phraseList,
+                    selectedPhrasePosList: context
+                        .read<ClassifyingBloc>()
+                        .state
+                        .selectedPosPhraseList,
                   ),
                 ),
               ),
@@ -54,19 +68,25 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   width: 30,
                   child: Align(
                     alignment: Alignment.center,
-                    child: InkWell(
-                      child: Text(
-                        'NGB',
-                        style: TextStyle(
-                            color:
-                                widget._classificationService.selectedFilter ==
-                                        'ngb'
+                    child: BlocBuilder<CatClassBloc, CatClassState>(
+                      builder: (context, state) {
+                        return InkWell(
+                          child: Text(
+                            'NGB',
+                            style: TextStyle(
+                                color: state.selectedFilter == 'ngb'
                                     ? Colors.green
                                     : Colors.black),
-                      ),
-                      onTap: () {
-                        widget._classificationService.categoryFilteredBy('ngb');
-                        setState(() {});
+                          ),
+                          onTap: () {
+                            context
+                                .read<CatClassBloc>()
+                                .add(CatClassEventFilterBy('ngb'));
+                            // widget._classificationService
+                            //     .categoryFilteredBy('ngb');
+                            setState(() {});
+                          },
+                        );
                       },
                     ),
                   ),
@@ -80,19 +100,25 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   width: 30,
                   child: Align(
                     alignment: Alignment.center,
-                    child: InkWell(
-                      child: Text(
-                        'CC',
-                        style: TextStyle(
-                            color:
-                                widget._classificationService.selectedFilter ==
-                                        'cc'
+                    child: BlocBuilder<CatClassBloc, CatClassState>(
+                      builder: (context, state) {
+                        return InkWell(
+                          child: Text(
+                            'CC',
+                            style: TextStyle(
+                                color: state.selectedFilter == 'cc'
                                     ? Colors.green
                                     : Colors.black),
-                      ),
-                      onTap: () {
-                        widget._classificationService.categoryFilteredBy('cc');
-                        setState(() {});
+                          ),
+                          onTap: () {
+                            context
+                                .read<CatClassBloc>()
+                                .add(CatClassEventFilterBy('cc'));
+                            // widget._classificationService
+                            //     .categoryFilteredBy('cc');
+                            setState(() {});
+                          },
+                        );
                       },
                     ),
                   ),
@@ -106,20 +132,25 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   width: 35,
                   child: Align(
                     alignment: Alignment.center,
-                    child: InkWell(
-                      child: Text(
-                        'Latin',
-                        style: TextStyle(
-                            color:
-                                widget._classificationService.selectedFilter ==
-                                        'latin'
+                    child: BlocBuilder<CatClassBloc, CatClassState>(
+                      builder: (context, state) {
+                        return InkWell(
+                          child: Text(
+                            'Latin',
+                            style: TextStyle(
+                                color: state.selectedFilter == 'latin'
                                     ? Colors.green
                                     : Colors.black),
-                      ),
-                      onTap: () {
-                        widget._classificationService
-                            .categoryFilteredBy('latin');
-                        setState(() {});
+                          ),
+                          onTap: () {
+                            context
+                                .read<CatClassBloc>()
+                                .add(CatClassEventFilterBy('latin'));
+                            // widget._classificationService
+                            //     .categoryFilteredBy('latin');
+                            setState(() {});
+                          },
+                        );
                       },
                     ),
                   ),
@@ -170,26 +201,37 @@ class _CategoriesPageState extends State<CategoriesPage> {
             ],
           ),
           Expanded(
-            child: Obx(() => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(child: buildTree()))),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: BlocBuilder<ClassifyingBloc, ClassifyingState>(
+                builder: (context, state) {
+                  return SingleChildScrollView(child: buildTree(state));
+                },
+              ),
+            ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(AppIconData.saveInCloud),
         onPressed: () async {
-          await widget._classifyingController.onSaveClassification();
-          widget._classifyingController.onSelectNonePhrase();
-
-          Get.back();
+          context
+              .read<ClassifyingBloc>()
+              .add(ClassifyingEventOnSaveClassification());
+          context
+              .read<ClassifyingBloc>()
+              .add(ClassifyingEventOnSelectClearPhrase());
+          // await widget._classifyingController.onSaveClassification();
+          // widget._classifyingController.onSelectNonePhrase();
+          Navigator.of(context).pop();
+          // Get.back();
         },
       ),
     );
   }
 
-  Widget buildTree() {
-    List<TreeNode> nodes = widget._classifyingController.createTree();
+  Widget buildTree(ClassifyingState state) {
+    List<TreeNode> nodes = createTree(state);
     const Key key = ValueKey(22);
     _controller.expandNode(key);
 
@@ -197,5 +239,61 @@ class _CategoriesPageState extends State<CategoriesPage> {
       treeController: _controller,
       nodes: nodes,
     );
+  }
+
+  List<TreeNode> createTree(ClassifyingState state) {
+    List<TreeNode> treeNodeList = [];
+    treeNodeList.clear();
+    treeNodeList.add(
+      childrenNodes(null, state),
+    );
+
+    return treeNodeList;
+  }
+
+  TreeNode childrenNodes(CatClassModel? ngb, ClassifyingState state) {
+    List<CatClassModel> sub = [];
+    if (ngb == null) {
+      sub = context
+          .read<CatClassBloc>()
+          .state
+          .category
+          .where((element) => element.parent == null)
+          .toList();
+    } else {
+      sub = context
+          .read<CatClassBloc>()
+          .state
+          .category
+          .where((element) => element.parent == ngb.id)
+          .toList();
+    }
+    CatClassModel ngbTemp =
+        ngb ?? CatClassModel(id: '...', name: 'Classificações', filter: []);
+    const Key key = ValueKey(22);
+
+    if (sub.isNotEmpty) {
+      return TreeNode(
+          key: ngbTemp.id == '...' ? key : null,
+          content: widgetForTree(ngbTemp, state),
+          children: sub.map((e) => childrenNodes(e, state)).toList());
+    }
+    return TreeNode(
+      content: widgetForTree(ngbTemp, state),
+    );
+  }
+
+  Widget widgetForTree(CatClassModel ngbTemp, ClassifyingState state) {
+    return InkWell(
+        child: Text(
+          ngbTemp.name,
+          style: TextStyle(
+              color: state.selectedCategoryIdList.contains(ngbTemp.id)
+                  ? Colors.orange
+                  : null),
+        ),
+        onTap: () => context
+            .read<ClassifyingBloc>()
+            .add(ClassifyingEventOnSelectCategory(ngbTemp.id)));
   }
 }
