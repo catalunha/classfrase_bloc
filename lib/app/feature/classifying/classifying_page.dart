@@ -155,7 +155,7 @@ class _ClassifyingViewState extends State<ClassifyingView> {
               backgroundColor: Colors.orangeAccent,
             ),
             child: const Text(
-              'Clique aqui para escolher classificações para esta seleção.',
+              'Clique aqui para classificar a parte selecionada.',
               style: TextStyle(
                 color: Colors.black,
               ),
@@ -164,7 +164,8 @@ class _ClassifyingViewState extends State<ClassifyingView> {
           Container(
               color: Colors.black12,
               child: const Center(
-                  child: Text('Você pode reordenar as partes já classificadas.',
+                  child: Text(
+                      'Você pode reordenar as partes já classificadas a seguir.',
                       style: TextStyle(fontSize: 12)))),
           Expanded(
             child: Padding(

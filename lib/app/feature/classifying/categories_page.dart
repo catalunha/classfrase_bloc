@@ -53,114 +53,80 @@ class _CategoriesPageState extends State<CategoriesPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                color: Colors.black12,
-                child: const Text('Filtros e ações: '),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+              // Container(
+              //   padding: const EdgeInsets.only(left: 10, right: 10),
+              //   color: Colors.black12,
+              //   child: const Text('Filtros e ações: '),
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
               Tooltip(
                 message: 'Classificações encontradas na NGB e outras',
-                child: SizedBox(
-                  // color: Colors.red,
-                  width: 30,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: BlocBuilder<CatClassBloc, CatClassState>(
-                      builder: (context, state) {
-                        return InkWell(
-                          child: Text(
-                            'NGB',
-                            style: TextStyle(
-                                color: state.selectedFilter == 'ngb'
-                                    ? Colors.green
-                                    : Colors.black),
-                          ),
-                          onTap: () {
-                            context
-                                .read<CatClassBloc>()
-                                .add(CatClassEventFilterBy('ngb'));
-                            // widget._classificationService
-                            //     .categoryFilteredBy('ngb');
-                            setState(() {});
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                child: BlocBuilder<CatClassBloc, CatClassState>(
+                  builder: (context, state) {
+                    return TextButton(
+                        onPressed: () {
+                          setState(() {});
+                          context
+                              .read<CatClassBloc>()
+                              .add(CatClassEventFilterBy('ngb'));
+                        },
+                        child: Text(
+                          'NGB',
+                          style: TextStyle(
+                              color: state.selectedFilter == 'ngb'
+                                  ? Colors.green
+                                  : Colors.black),
+                        ));
+                  },
                 ),
               ),
-              const SizedBox(width: 5),
               Tooltip(
                 message: 'Classificações mais comuns ao CC e outras',
-                child: SizedBox(
-                  // color: Colors.red,
-                  width: 30,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: BlocBuilder<CatClassBloc, CatClassState>(
-                      builder: (context, state) {
-                        return InkWell(
-                          child: Text(
-                            'CC',
-                            style: TextStyle(
-                                color: state.selectedFilter == 'cc'
-                                    ? Colors.green
-                                    : Colors.black),
-                          ),
-                          onTap: () {
-                            context
-                                .read<CatClassBloc>()
-                                .add(CatClassEventFilterBy('cc'));
-                            // widget._classificationService
-                            //     .categoryFilteredBy('cc');
-                            setState(() {});
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                child: BlocBuilder<CatClassBloc, CatClassState>(
+                  builder: (context, state) {
+                    return TextButton(
+                        onPressed: () {
+                          setState(() {});
+                          context
+                              .read<CatClassBloc>()
+                              .add(CatClassEventFilterBy('cc'));
+                        },
+                        child: Text(
+                          'CC',
+                          style: TextStyle(
+                              color: state.selectedFilter == 'cc'
+                                  ? Colors.green
+                                  : Colors.black),
+                        ));
+                  },
                 ),
               ),
-              const SizedBox(width: 5),
               Tooltip(
                 message: 'Classificações mais comuns em latin',
-                child: SizedBox(
-                  // color: Colors.red,
-                  width: 35,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: BlocBuilder<CatClassBloc, CatClassState>(
-                      builder: (context, state) {
-                        return InkWell(
-                          child: Text(
-                            'Latin',
-                            style: TextStyle(
-                                color: state.selectedFilter == 'latin'
-                                    ? Colors.green
-                                    : Colors.black),
-                          ),
-                          onTap: () {
-                            context
-                                .read<CatClassBloc>()
-                                .add(CatClassEventFilterBy('latin'));
-                            // widget._classificationService
-                            //     .categoryFilteredBy('latin');
-                            setState(() {});
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                child: BlocBuilder<CatClassBloc, CatClassState>(
+                  builder: (context, state) {
+                    return TextButton(
+                        onPressed: () {
+                          setState(() {});
+                          context
+                              .read<CatClassBloc>()
+                              .add(CatClassEventFilterBy('latin'));
+                        },
+                        child: Text(
+                          'LATIN',
+                          style: TextStyle(
+                              color: state.selectedFilter == 'latin'
+                                  ? Colors.green
+                                  : Colors.black),
+                        ));
+                  },
                 ),
               ),
-              const SizedBox(width: 5),
               Tooltip(
                 message: 'Encolher toda a lista',
                 child: SizedBox(
-                  // color: Colors.red,
                   width: 30,
                   child: IconButton(
                     onPressed: () {

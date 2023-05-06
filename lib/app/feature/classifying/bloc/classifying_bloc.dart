@@ -18,6 +18,8 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
     required PhraseRepository repository,
   })  : _repository = repository,
         super(ClassifyingState.initial(model)) {
+    on<ClassifyingEventStart>(_onClassifyingEventStart);
+
     on<ClassifyingEventOnSelectPhrase>(_onClassifyingEventOnSelectPhrase);
     on<ClassifyingEventOnSelectAllPhrase>(_onClassifyingEventOnSelectAllPhrase);
     on<ClassifyingEventOnSelectClearPhrase>(
@@ -31,11 +33,30 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
     on<ClassifyingEventOnSelectCategory>(_onClassifyingEventOnSelectCategory);
     on<ClassifyingEventOnSaveClassification>(
         _onClassifyingEventOnSaveClassification);
+    add(ClassifyingEventStart());
   }
   final List<String> cols = [
     ...PhraseEntity.singleCols,
     ...PhraseEntity.pointerCols,
   ];
+  FutureOr<void> _onClassifyingEventStart(
+      ClassifyingEventStart event, Emitter<ClassifyingState> emit) async {
+    print('Staaaaaaaarting....');
+    emit(state.copyWith(status: ClassifyingStateStatus.loading));
+    try {
+      PhraseModel? temp = await _repository.readById(state.model.id!, cols);
+      emit(state.copyWith(
+        model: temp,
+        status: ClassifyingStateStatus.success,
+      ));
+    } catch (e) {
+      //print(e);
+      emit(state.copyWith(
+          status: ClassifyingStateStatus.error,
+          error: 'Erro ao buscar dados da frase para pdf'));
+    }
+  }
+
   FutureOr<void> _onClassifyingEventOnChangeClassOrder(
       ClassifyingEventOnChangeClassOrder event,
       Emitter<ClassifyingState> emit) async {
@@ -64,8 +85,8 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
   FutureOr<void> _onClassifyingEventOnSelectAllPhrase(
       ClassifyingEventOnSelectAllPhrase event, Emitter<ClassifyingState> emit) {
     List<int> listTemp = [];
-    for (var wordPos = 0; wordPos < state.model.phrase.length; wordPos++) {
-      if (state.model.phrase[wordPos] != ' ') {
+    for (var wordPos = 0; wordPos < state.model.phraseList.length; wordPos++) {
+      if (state.model.phraseList[wordPos] != ' ') {
         listTemp.add(wordPos);
       }
     }
@@ -81,8 +102,8 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
   FutureOr<void> _onClassifyingEventOnSelectInversePhrase(
       ClassifyingEventOnSelectInversePhrase event,
       Emitter<ClassifyingState> emit) {
-    for (var wordPos = 0; wordPos < state.model.phrase.length; wordPos++) {
-      if (state.model.phrase[wordPos] != ' ') {
+    for (var wordPos = 0; wordPos < state.model.phraseList.length; wordPos++) {
+      if (state.model.phraseList[wordPos] != ' ') {
         add(ClassifyingEventOnSelectPhrase(phrasePos: wordPos));
       }
     }

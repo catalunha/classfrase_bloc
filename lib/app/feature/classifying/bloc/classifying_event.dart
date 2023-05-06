@@ -1,5 +1,7 @@
 abstract class ClassifyingEvent {}
 
+class ClassifyingEventStart extends ClassifyingEvent {}
+
 class ClassifyingEventOnSelectPhrase extends ClassifyingEvent {
   final int phrasePos;
   ClassifyingEventOnSelectPhrase({
