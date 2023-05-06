@@ -19,4 +19,7 @@ class UserProfileRepository {
   Future<UserProfileModel?> readById(String id,
           [List<String> cols = const []]) =>
       userProfileB4a.readById(id, cols);
+  Future<UserProfileModel?> readByEmail(String email,
+          [List<String> cols = const []]) =>
+      userProfileB4a.readByEmail(email, cols);
 }

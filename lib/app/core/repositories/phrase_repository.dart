@@ -14,8 +14,8 @@ class PhraseRepository {
     List<String> cols = const [],
   ]) =>
       phraseB4a.list(query, pagination, cols);
-  Future<List<PhraseModel>> listThisPerson(String personId) =>
-      phraseB4a.listThisPerson(personId);
+  // Future<List<PhraseModel>> listThisPerson(String personId) =>
+  //     phraseB4a.listThisPerson(personId);
   Future<String> update(PhraseModel model) => phraseB4a.update(model);
   Future<bool> delete(String modelId) => phraseB4a.delete(modelId);
   Future<PhraseModel?> readById(String id, [List<String> cols = const []]) =>

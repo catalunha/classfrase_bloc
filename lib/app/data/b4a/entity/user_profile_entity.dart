@@ -83,7 +83,7 @@ class UserProfileEntity {
       name: parseObject.get(UserProfileEntity.name),
       phone: parseObject.get(UserProfileEntity.phone),
       photo: parseObject.get(UserProfileEntity.photo)?.get('url'),
-      isActive: parseObject.get(UserProfileEntity.isActive),
+      isActive: parseObject.get(UserProfileEntity.isActive) ?? true,
       access: parseObject.get<List<dynamic>>(UserProfileEntity.access) != null
           ? parseObject
               .get<List<dynamic>>(UserProfileEntity.access)!

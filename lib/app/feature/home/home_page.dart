@@ -105,7 +105,7 @@ class HomeView extends StatelessWidget {
                     width: 170,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        // => Get.toNamed(Routes.learnList),
+                        Navigator.of(context).pushNamed('/learn');
                       },
                       icon: const Icon(AppIconData.learn),
                       label: const Text('Aprender.'),
