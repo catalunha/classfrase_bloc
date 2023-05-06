@@ -1,3 +1,4 @@
+import 'package:classfrase_bloc/app/feature/classifying/classifying_page.dart';
 import 'package:classfrase_bloc/app/feature/phrase/save/phrase_save_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -148,7 +149,16 @@ class PhraseList extends StatelessWidget {
             tooltip: 'Classificar esta frase',
             icon: const Icon(AppIconData.letter),
             onPressed: () {
-              // Get.toNamed(Routes.phraseClassifying, arguments: phrase)),
+              // Navigator.of(context)
+              //     .pushNamed('/classifying', arguments: phrase);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<CatClassBloc>(context),
+                    child: ClassifyingPage(model: phrase),
+                  ),
+                ),
+              );
             }),
         IconButton(
           tooltip: 'PDF da classificação desta frase.',

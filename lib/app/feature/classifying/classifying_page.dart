@@ -1,3 +1,5 @@
+import 'package:classfrase_bloc/app/core/category_classification/bloc/cat_class_bloc.dart';
+import 'package:classfrase_bloc/app/feature/phrase/list/bloc/phrase_list_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -103,8 +105,10 @@ class _ClassifyingViewState extends State<ClassifyingView> {
                         context: context,
                         phraseList: state.model.phraseList,
                         selectedPhrasePosList: state.selectedPosPhraseList,
-                        onSelectPhrase:
-                            widget._classifyingController.onSelectPhrase,
+                        onSelectPhrase: (value) {
+                          context.read<ClassifyingBloc>().add(
+                              ClassifyingEventOnSelectPhrase(phrasePos: value));
+                        },
                         setState: setStateLocal,
                       ),
                     ),
@@ -115,11 +119,19 @@ class _ClassifyingViewState extends State<ClassifyingView> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (widget
-                  ._classifyingController.selectedPosPhraseList.isNotEmpty) {
-                await widget._classifyingController
-                    .onMarkCategoryIfAlreadyClassifiedInPos();
-                Get.toNamed(Routes.phraseCategoryGroup);
+              List<int> selectedPosPhraseList =
+                  context.read<ClassifyingBloc>().state.selectedPosPhraseList;
+              if (selectedPosPhraseList.isNotEmpty) {
+                context.read<ClassifyingBloc>().add(
+                    ClassifyingEventOnMarkCategoryIfAlreadyClassifiedInPos());
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                      value: BlocProvider.of<PhraseListBloc>(context),
+                    ),
+                  ),
+                );
+                // Get.toNamed(Routes.phraseCategoryGroup);
               } else {
                 const snackBar = SnackBar(
                   content: Text('Oops. Selecione um trecho da frase.'),
@@ -135,7 +147,7 @@ class _ClassifyingViewState extends State<ClassifyingView> {
               backgroundColor: Colors.orangeAccent,
             ),
             child: const Text(
-              'Clique aqui para escolher classificações.',
+              'Clique aqui para escolher classificações para esta seleção.',
               style: TextStyle(
                 color: Colors.black,
               ),
@@ -147,22 +159,30 @@ class _ClassifyingViewState extends State<ClassifyingView> {
                   child: Text('Você pode reordenar as partes já classificadas.',
                       style: TextStyle(fontSize: 12)))),
           Expanded(
-            child: Obx(() => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ReorderableListView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: BlocBuilder<ClassifyingBloc, ClassifyingState>(
+                builder: (context, state) {
+                  return ReorderableListView(
                     onReorder: _onReorder,
                     children: showClassifications(
-                      phraseClassifications:
-                          widget._classifyingController.phrase.classifications,
-                      classOrder:
-                          widget._classifyingController.phrase.classOrder,
-                      phraseList:
-                          widget._classifyingController.phrase.phraseList,
-                      onSelectPhrase:
-                          widget._classifyingController.onSelectPhrase,
+                      categoryAll:
+                          context.read<CatClassBloc>().state.categoryAll,
+                      phraseClassifications: state.model.classifications,
+                      classOrder: state.model.classOrder,
+                      phraseList: state.model.phraseList,
+                      onSelectPhrase: (value) {
+                        context.read<ClassifyingBloc>().add(
+                            ClassifyingEventOnSelectPhrase(phrasePos: value));
+                      },
+                      onSelectClearPhrase: () => context
+                          .read<ClassifyingBloc>()
+                          .add(ClassifyingEventOnSelectClearPhrase()),
                     ),
-                  ),
-                )),
+                  );
+                },
+              ),
+            ),
           ),
         ],
       ),
@@ -176,11 +196,15 @@ class _ClassifyingViewState extends State<ClassifyingView> {
       }
     });
     List<String> classOrderTemp =
-        widget._classifyingController.phrase.classOrder;
+        context.read<ClassifyingBloc>().state.model.classOrder;
+    // widget._classifyingController.phrase.classOrder;
     String resourceId = classOrderTemp[oldIndex];
     classOrderTemp.removeAt(oldIndex);
     classOrderTemp.insert(newIndex, resourceId);
-    widget._classifyingController.onChangeClassOrder(classOrderTemp);
+    context
+        .read<ClassifyingBloc>()
+        .add(ClassifyingEventOnChangeClassOrder(classOrder: classOrderTemp));
+    // widget._classifyingController.onChangeClassOrder(classOrderTemp);
   }
 
   void setStateLocal() {

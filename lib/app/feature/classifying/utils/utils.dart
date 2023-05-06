@@ -1,9 +1,9 @@
-import 'package:classfrase/app/domain/models/catclass_model.dart';
-import 'package:classfrase/app/domain/models/phrase_classification_model.dart';
-import 'package:classfrase/app/presentation/services/classification/classification_service.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import '../../../core/models/catclass_model.dart';
+import '../../../core/models/phrase_classification_model.dart';
 
 List<InlineSpan> buildPhrase({
   required BuildContext context,
@@ -23,7 +23,11 @@ List<InlineSpan> buildPhrase({
                 decoration: TextDecoration.underline,
                 decorationStyle: TextDecorationStyle.solid,
               )
-            : null,
+            : const TextStyle(
+                color: Colors.cyan,
+                // decoration: TextDecoration.underline,
+                // decorationStyle: TextDecorationStyle.solid,
+              ),
         recognizer: onSelectPhrase == null
             ? null
             : (TapGestureRecognizer()
@@ -43,10 +47,12 @@ List<InlineSpan> buildPhrase({
 }
 
 List<Widget> showClassifications({
+  required List<CatClassModel> categoryAll,
   required Map<String, Classification> phraseClassifications,
   required List<String> classOrder,
   required List<String> phraseList,
   Function(int)? onSelectPhrase,
+  required VoidCallback onSelectClearPhrase,
 }) {
   List<Widget> lineList = [];
 
@@ -78,10 +84,11 @@ List<Widget> showClassifications({
 
     List<String> categoryIdList = classification.categoryIdList;
     List<String> classOrdemList = [];
-    ClassificationService classificationService = Get.find();
+
+    // ClassificationService classificationService = Get.find();
     for (var id in categoryIdList) {
-      CatClassModel? catClassModel = classificationService.categoryAll
-          .firstWhereOrNull((catClass) => catClass.id == id);
+      CatClassModel? catClassModel =
+          categoryAll.firstWhereOrNull((catClass) => catClass.id == id);
       if (catClassModel != null) {
         classOrdemList.add(catClassModel.ordem);
       }
@@ -112,6 +119,7 @@ List<Widget> showClassifications({
                         ? () {
                             // widget._classifyingController
                             //     .onSelectNonePhrase();
+                            onSelectClearPhrase();
                             for (var index in posPhraseList) {
                               onSelectPhrase(index);
                             }

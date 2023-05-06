@@ -9,6 +9,7 @@ import 'core/models/user_model.dart';
 import 'core/models/user_profile_model.dart';
 import 'core/repositories/user_repository.dart';
 import 'data/b4a/table/user_b4a.dart';
+import 'feature/classifying/classifying_page.dart';
 import 'feature/home/home_page.dart';
 import 'feature/pdf/pdf_all_page.dart';
 import 'feature/pdf/pdf_page.dart';
@@ -158,6 +159,11 @@ class _AppViewState extends State<AppView> {
           PhraseModel? phase =
               ModalRoute.of(context)!.settings.arguments as PhraseModel?;
           return PhraseSavePage(model: phase);
+        },
+        '/classifying': (context) {
+          PhraseModel phase =
+              ModalRoute.of(context)!.settings.arguments as PhraseModel;
+          return ClassifyingPage(model: phase);
         },
       },
       initialRoute: '/',
