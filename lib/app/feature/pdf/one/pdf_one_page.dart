@@ -2,20 +2,49 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-import '../../core/models/catclass_model.dart';
-import '../../core/models/phrase_classification_model.dart';
-import '../../core/models/phrase_model.dart';
+import '../../../core/models/catclass_model.dart';
+import '../../../core/models/phrase_classification_model.dart';
+import '../../../core/models/phrase_model.dart';
+import '../../../core/repositories/phrase_repository.dart';
+import 'bloc/pdf_one_bloc.dart';
+import 'bloc/pdf_one_state.dart';
 
-class PdfPhrasePage extends StatelessWidget {
+class PdfOnePage extends StatelessWidget {
   final PhraseModel phrase;
   final List<CatClassModel> categoryAll;
-  const PdfPhrasePage({
-    Key? key,
+
+  const PdfOnePage({
+    super.key,
     required this.phrase,
+    required this.categoryAll,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RepositoryProvider(
+      create: (context) => PhraseRepository(),
+      child: BlocProvider(
+        create: (context) => PdfOneBloc(
+          model: phrase,
+          repository: RepositoryProvider.of<PhraseRepository>(context),
+        ),
+        child: PdfOneView(categoryAll: categoryAll),
+      ),
+    );
+  }
+}
+
+class PdfOneView extends StatelessWidget {
+  // final PhraseModel phrase;
+  final List<CatClassModel> categoryAll;
+  const PdfOneView({
+    Key? key,
+    // required this.phrase,
     required this.categoryAll,
   }) : super(key: key);
 
@@ -23,22 +52,35 @@ class PdfPhrasePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('ClassFrase em PDF')),
-      body: PdfPreview(
-        pdfFileName: phrase.phrase,
-        build: (format) => _generatePdf(format, 'ClassFrase em PDF', context),
-        canDebug: false,
-        canChangeOrientation: false,
-        canChangePageFormat: false,
+      body: BlocBuilder<PdfOneBloc, PdfOneState>(
+        builder: (context, state) {
+          print('one ${state.model.classifications}');
+          if (state.model.classifications.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return PdfPreview(
+              pdfFileName: 'classfrase',
+              build: (format) => _generatePdf(state.model, format),
+              canDebug: false,
+              canChangeOrientation: false,
+              canChangePageFormat: false,
+            );
+          }
+        },
       ),
     );
   }
 
   Future<Uint8List> _generatePdf(
-      PdfPageFormat format, String title, BuildContext context1) async {
+    PhraseModel model,
+    PdfPageFormat format,
+  ) async {
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
     // final font1 = await PdfGoogleFonts.openSansRegular();
     // final font2 = await PdfGoogleFonts.openSansBold();
-    pw.ImageProvider? image;
+    // pw.ImageProvider? image;
 
     // try {
     //   final provider = await flutterImageProvider(
@@ -55,32 +97,31 @@ class PdfPhrasePage extends StatelessWidget {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         footer: (pw.Context context) => footerPage(context),
         build: (pw.Context context) => <pw.Widget>[
-          headerClassificator(image),
-          phraseText(),
+          headerClassificator(model.userProfile.name ?? 'Sem nome'),
+          phraseText(model.phraseList.join()),
           pw.Text(
-            'Pasta: ${phrase.folder}',
+            'Pasta: ${model.folder}',
             style: const pw.TextStyle(fontSize: 10),
           ),
           pw.Text(
-            'Fonte: ${phrase.font}',
+            'Fonte: ${model.font}',
             style: const pw.TextStyle(fontSize: 10),
           ),
           pw.Text(
-            'Observações: ${phrase.note}',
+            'Observações: ${model.note}',
             style: const pw.TextStyle(fontSize: 10),
           ),
           header('Classificações:'),
-          ...buildClassByLine(context1),
+          ...buildClassByLine(model),
           header('Diagrama:'),
-          phrase.diagramUrl != null && phrase.diagramUrl!.isNotEmpty
+          model.diagramUrl != null && model.diagramUrl!.isNotEmpty
               ? pw.Row(
                   children: [
                     pw.Text(
                       'Para ver o diagrama online consulte: ',
                       style: const pw.TextStyle(fontSize: 10),
                     ),
-                    _UrlText(
-                        'Clique aqui', phrase.diagramUrl ?? 'Sem diagrama'),
+                    _UrlText('Clique aqui', model.diagramUrl ?? 'Sem diagrama'),
                     // _UrlText('clique aqui.', phrase.diagramUrl!),
                   ],
                 )
@@ -114,7 +155,7 @@ class PdfPhrasePage extends StatelessWidget {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(
-            'ClassFrase (R) 2022. Feito com carinho pela Família Catalunha. Ore por nós, que Deus te abençõe.',
+            'ClassFrase (R) 2023. Feito com carinho pela Família Catalunha. Ore por nós, que Deus te abençõe.',
             style: const pw.TextStyle(fontSize: 10),
           ),
           pw.Text(
@@ -133,10 +174,10 @@ class PdfPhrasePage extends StatelessWidget {
     );
   }
 
-  phraseText() {
+  phraseText(String txt) {
     return pw.Center(
       child: pw.Text(
-        phrase.phraseList.join(),
+        txt,
         textAlign: pw.TextAlign.center,
         style: const pw.TextStyle(
           fontSize: 18,
@@ -146,14 +187,14 @@ class PdfPhrasePage extends StatelessWidget {
     );
   }
 
-  headerClassificator(image) {
+  headerClassificator(String name) {
     return pw.Header(
       level: 1,
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: <pw.Widget>[
           pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-            pw.Text(phrase.userProfile.name ?? 'Sem nome'),
+            pw.Text(name),
             pw.Text('Classificador da frase:'),
           ]),
           // image != null
@@ -175,18 +216,20 @@ class PdfPhrasePage extends StatelessWidget {
     );
   }
 
-  List<pw.Widget> buildClassByLine(BuildContext context) {
+  List<pw.Widget> buildClassByLine(
+    PhraseModel model,
+  ) {
     List<pw.Widget> lineList = [];
 
-    for (var classId in phrase.classOrder) {
-      Classification classification = phrase.classifications[classId]!;
+    for (var classId in model.classOrder) {
+      Classification classification = model.classifications[classId]!;
 
       // +++ Montando frase destacando a seleção
       List<pw.InlineSpan> listSpan = [];
-      for (var i = 0; i < phrase.phraseList.length; i++) {
+      for (var i = 0; i < model.phraseList.length; i++) {
         listSpan.add(pw.TextSpan(
-          text: phrase.phraseList[i],
-          style: phrase.phraseList[i] != ' ' &&
+          text: model.phraseList[i],
+          style: model.phraseList[i] != ' ' &&
                   classification.posPhraseList.contains(i)
               ? pw.TextStyle(
                   fontWeight: pw.FontWeight.bold,
@@ -209,7 +252,7 @@ class PdfPhrasePage extends StatelessWidget {
       List<String> categoryIdList = classification.categoryIdList;
       List<String> classOrdemList = [];
       // List<CatClassModel> categoryAll =
-      //     context.read<CatClassBloc>().state.categoryAll;
+      //     context.read<CatClassBloc>().categoryAll;
 
       for (var id in categoryIdList) {
         CatClassModel? catClassModel =

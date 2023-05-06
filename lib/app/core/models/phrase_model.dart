@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 
 import 'phrase_classification_model.dart';
@@ -14,7 +12,6 @@ class PhraseModel {
   final Map<String, Classification> classifications;
   final List<String> classOrder;
 
-  final List<String>? allCategoryList;
   final String folder;
   final String? font;
   final String? diagramUrl;
@@ -29,7 +26,6 @@ class PhraseModel {
     required this.phraseList,
     required this.classifications,
     required this.classOrder,
-    this.allCategoryList,
     this.folder = '/',
     this.font,
     this.diagramUrl,
@@ -45,7 +41,6 @@ class PhraseModel {
     List<String>? phraseList,
     Map<String, Classification>? classifications,
     List<String>? classOrder,
-    List<String>? allCategoryList,
     String? folder,
     String? font,
     String? diagramUrl,
@@ -60,7 +55,6 @@ class PhraseModel {
       phraseList: phraseList ?? this.phraseList,
       classifications: classifications ?? this.classifications,
       classOrder: classOrder ?? this.classOrder,
-      allCategoryList: allCategoryList ?? this.allCategoryList,
       folder: folder ?? this.folder,
       font: font ?? this.font,
       diagramUrl: diagramUrl ?? this.diagramUrl,
@@ -81,9 +75,6 @@ class PhraseModel {
     result.addAll({'phraseList': phraseList});
     result.addAll({'classifications': classifications});
     result.addAll({'classOrder': classOrder});
-    if (allCategoryList != null) {
-      result.addAll({'allCategoryList': allCategoryList});
-    }
     result.addAll({'folder': folder});
     if (font != null) {
       result.addAll({'font': font});
@@ -108,7 +99,6 @@ class PhraseModel {
       phraseList: List<String>.from(map['phraseList']),
       classifications: Map<String, Classification>.from(map['classifications']),
       classOrder: List<String>.from(map['classOrder']),
-      allCategoryList: List<String>.from(map['allCategoryList']),
       folder: map['folder'] ?? '',
       font: map['font'],
       diagramUrl: map['diagramUrl'],
@@ -117,11 +107,6 @@ class PhraseModel {
       isPublic: map['isPublic'] ?? false,
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory PhraseModel.fromJson(String id, String source) =>
-      PhraseModel.fromMap(json.decode(source));
 
   static List<String> setPhraseList(String phrase) {
     String word = '';
@@ -165,7 +150,6 @@ class PhraseModel {
         listEquals(other.phraseList, phraseList) &&
         mapEquals(other.classifications, classifications) &&
         listEquals(other.classOrder, classOrder) &&
-        listEquals(other.allCategoryList, allCategoryList) &&
         other.folder == folder &&
         other.font == font &&
         other.diagramUrl == diagramUrl &&
@@ -182,7 +166,6 @@ class PhraseModel {
         phraseList.hashCode ^
         classifications.hashCode ^
         classOrder.hashCode ^
-        allCategoryList.hashCode ^
         folder.hashCode ^
         font.hashCode ^
         diagramUrl.hashCode ^
@@ -193,6 +176,6 @@ class PhraseModel {
 
   @override
   String toString() {
-    return 'PhraseModel(id: $id, userProfile: $userProfile, phrase: $phrase, phraseList: $phraseList, classifications: $classifications, classOrder: $classOrder, allCategoryList: $allCategoryList, folder: $folder, font: $font, diagramUrl: $diagramUrl, note: $note, isArchived: $isArchived, isPublic: $isPublic)';
+    return 'PhraseModel(id: $id, userProfile: $userProfile, phrase: $phrase, phraseList: $phraseList, classifications: $classifications, classOrder: $classOrder, folder: $folder, font: $font, diagramUrl: $diagramUrl, note: $note, isArchived: $isArchived, isPublic: $isPublic)';
   }
 }

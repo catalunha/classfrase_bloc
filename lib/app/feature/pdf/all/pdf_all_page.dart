@@ -5,8 +5,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-import '../../core/models/phrase_model.dart';
-import '../../core/models/user_profile_model.dart';
+import '../../../core/models/phrase_model.dart';
+import '../../../core/models/user_profile_model.dart';
 
 class PdfAllPhrasesPage extends StatelessWidget {
   final List<PhraseModel> phraseList;

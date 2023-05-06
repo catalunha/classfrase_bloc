@@ -7,16 +7,17 @@ import 'user_profile_entity.dart';
 class PhraseEntity {
   static const String className = 'Phrase';
   static const String id = 'objectId';
-  static const String name = 'name';
   static const String phrase = 'phrase';
   static const String phraseList = 'phraseList';
+
   static const String classifications = 'classifications';
   static const String classOrder = 'classOrder';
-  static const String allCategoryList = 'allCategoryList';
+
   static const String folder = 'folder';
   static const String font = 'font';
   static const String diagramUrl = 'diagramUrl';
   static const String note = 'note';
+
   static const String isArchived = 'isArchived';
   static const String isPublic = 'isPublic';
 
@@ -27,12 +28,10 @@ class PhraseEntity {
   }
 
   static final List<String> singleCols = [
-    PhraseEntity.name,
     PhraseEntity.phrase,
     PhraseEntity.phraseList,
     PhraseEntity.classifications,
     PhraseEntity.classOrder,
-    PhraseEntity.allCategoryList,
     PhraseEntity.folder,
     PhraseEntity.font,
     PhraseEntity.diagramUrl,
@@ -85,10 +84,11 @@ class PhraseEntity {
   }
 
   PhraseModel toModel(ParseObject parseObject, [List<String> cols = const []]) {
-    Map<String, Classification>? classifications = <String, Classification>{};
-    Map<String, dynamic>? tempClass =
-        parseObject.get<Map<String, dynamic>>(PhraseEntity.classifications);
-    if (tempClass != null) {
+    Map<String, Classification> classifications = <String, Classification>{};
+    if (parseObject.get<Map<String, dynamic>>(PhraseEntity.classifications) !=
+        null) {
+      Map<String, dynamic> tempClass =
+          parseObject.get<Map<String, dynamic>>(PhraseEntity.classifications)!;
       for (var item in tempClass.entries) {
         classifications[item.key] = Classification.fromMap(item.value);
       }
@@ -99,15 +99,21 @@ class PhraseEntity {
       userProfile: UserProfileEntity()
           .toModel(parseObject.get(PhraseEntity.userProfile)),
       phrase: parseObject.get<String>(PhraseEntity.phrase)!,
-      phraseList: parseObject
-          .get<List<dynamic>>(PhraseEntity.phraseList)!
-          .map((e) => e.toString())
-          .toList(),
+      phraseList:
+          parseObject.get<List<dynamic>>(PhraseEntity.phraseList) != null
+              ? parseObject
+                  .get<List<dynamic>>(PhraseEntity.phraseList)!
+                  .map((e) => e.toString())
+                  .toList()
+              : [],
       classifications: classifications,
-      classOrder: parseObject
-          .get<List<dynamic>>(PhraseEntity.classOrder)!
-          .map((e) => e.toString())
-          .toList(),
+      classOrder:
+          parseObject.get<List<dynamic>>(PhraseEntity.classOrder) != null
+              ? parseObject
+                  .get<List<dynamic>>(PhraseEntity.classOrder)!
+                  .map((e) => e.toString())
+                  .toList()
+              : [],
       folder: parseObject.get<String>(PhraseEntity.folder) ?? '/',
       font: parseObject.get<String>(PhraseEntity.font),
       diagramUrl: parseObject.get<String>(PhraseEntity.diagramUrl),

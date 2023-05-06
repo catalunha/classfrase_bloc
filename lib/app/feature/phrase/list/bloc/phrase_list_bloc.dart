@@ -31,10 +31,21 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
     on<PhraseListEventRemoveFromList>(_onPhraseListEventRemoveFromList);
     add(PhraseListEventStartList());
   }
-  final List<String> cols = [
-    ...PhraseEntity.singleCols,
-    ...PhraseEntity.pointerCols,
-  ];
+  // final List<String> cols = [
+  //   ...PhraseEntity.singleCols,
+  //   ...PhraseEntity.pointerCols,
+  // ];
+
+  final List<String> cols = PhraseEntity.selectedCols([
+    PhraseEntity.phrase,
+    PhraseEntity.folder,
+    PhraseEntity.font,
+    PhraseEntity.diagramUrl,
+    PhraseEntity.note,
+    PhraseEntity.isArchived,
+    PhraseEntity.isPublic,
+    PhraseEntity.userProfile,
+  ]);
   FutureOr<void> _onPhraseListEventStartList(
       PhraseListEventStartList event, Emitter<PhraseListState> emit) async {
     emit(state.copyWith(
@@ -63,6 +74,7 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
         query: query,
       ));
     } catch (e) {
+      print(e);
       emit(
         state.copyWith(
             status: PhraseListStateStatus.error,
