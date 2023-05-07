@@ -245,24 +245,24 @@ class LearnPhrasesView extends StatelessWidget {
             ),
             Wrap(
               children: [
-                IconButton(
-                    tooltip: 'Ver classificação desta frase.',
-                    icon: const Icon(AppIconData.letter),
-                    onPressed: () {
-                      // Navigator.of(context)
-                      //     .pushNamed('/classifying', arguments: phrase);
-                      // Navigator.of(context).push(
-                      //   MaterialPageRoute(
-                      //     builder: (_) => BlocProvider.value(
-                      //       value: BlocProvider.of<PhraseListBloc>(context),
-                      //       child: BlocProvider.value(
-                      //         value: BlocProvider.of<CatClassBloc>(context),
-                      //         child: ClassifyingPage(model: phrase),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // );
-                    }),
+                // IconButton(
+                //     tooltip: 'Ver classificação desta frase.',
+                //     icon: const Icon(AppIconData.letter),
+                //     onPressed: () {
+                //       // Navigator.of(context)
+                //       //     .pushNamed('/classifying', arguments: phrase);
+                //       // Navigator.of(context).push(
+                //       //   MaterialPageRoute(
+                //       //     builder: (_) => BlocProvider.value(
+                //       //       value: BlocProvider.of<PhraseListBloc>(context),
+                //       //       child: BlocProvider.value(
+                //       //         value: BlocProvider.of<CatClassBloc>(context),
+                //       //         child: ClassifyingPage(model: phrase),
+                //       //       ),
+                //       //     ),
+                //       //   ),
+                //       // );
+                //     }),
                 IconButton(
                   tooltip: 'Ver PDF da classificação desta frase.',
                   icon: const Icon(AppIconData.print),

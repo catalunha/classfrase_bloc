@@ -145,6 +145,7 @@ class PdfAllPhrasesPage extends StatelessWidget {
   writePhrase(PhraseModel phrase) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
+      mainAxisAlignment: pw.MainAxisAlignment.start,
       children: [
         pw.Center(
           child: pw.Text(
@@ -159,9 +160,18 @@ class PdfAllPhrasesPage extends StatelessWidget {
         pw.Text('Pública: ${phrase.isPublic ? "Sim" : "Não"}'),
         pw.Text('Pasta: ${phrase.folder}'),
         pw.Text('Fonte: ${phrase.font}'),
-        pw.Text('Diagrama:'),
-        _UrlText(phrase.diagramUrl ?? '', phrase.diagramUrl),
-        // pw.Text('Diagrama: ${phrase.diagramUrl ?? ''}'),
+        pw.Row(children: [
+          pw.Text('Para ver o diagrama online '),
+          _UrlText('clique aqui.', phrase.diagramUrl),
+        ]),
+        pw.Text(
+          'Ou consulte ',
+          style: const pw.TextStyle(fontSize: 10),
+        ),
+        pw.Text(
+          phrase.diagramUrl ?? '',
+          style: const pw.TextStyle(fontSize: 10),
+        ),
         pw.Text('Observações: ${phrase.note ?? ""}'),
         pw.Divider(),
       ],
@@ -178,6 +188,7 @@ class PdfAllPhrasesPage extends StatelessWidget {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(userProfile.name ?? 'Sem nome'),
+              pw.Text(userProfile.email),
               pw.Text('Classificador destas ${phraseList.length} frases:'),
               // pw.Divider(),
             ],

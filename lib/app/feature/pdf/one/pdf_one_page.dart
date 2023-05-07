@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:classfrase_bloc/app/core/models/user_profile_model.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -97,7 +98,7 @@ class PdfOneView extends StatelessWidget {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         footer: (pw.Context context) => footerPage(context),
         build: (pw.Context context) => <pw.Widget>[
-          headerClassificator(model.userProfile.name ?? 'Sem nome'),
+          headerClassificator(model.userProfile),
           phraseText(model.phraseList.join()),
           pw.Text(
             'Pasta: ${model.folder}',
@@ -118,14 +119,22 @@ class PdfOneView extends StatelessWidget {
               ? pw.Row(
                   children: [
                     pw.Text(
-                      'Para ver o diagrama online consulte: ',
+                      'Para ver o diagrama online ',
                       style: const pw.TextStyle(fontSize: 10),
                     ),
-                    _UrlText('Clique aqui', model.diagramUrl ?? 'Sem diagrama'),
-                    // _UrlText('clique aqui.', phrase.diagramUrl!),
+                    // _UrlText('Clique aqui', model.diagramUrl ?? 'Sem diagrama'),
+                    _UrlText('clique aqui.', model.diagramUrl!),
                   ],
                 )
               : pw.Text(''),
+          pw.Text(
+            'Ou consulte ',
+            style: const pw.TextStyle(fontSize: 10),
+          ),
+          pw.Text(
+            model.diagramUrl ?? '',
+            style: const pw.TextStyle(fontSize: 10),
+          ),
         ],
       ),
     );
@@ -187,14 +196,15 @@ class PdfOneView extends StatelessWidget {
     );
   }
 
-  headerClassificator(String name) {
+  headerClassificator(UserProfileModel userProfile) {
     return pw.Header(
       level: 1,
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: <pw.Widget>[
           pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-            pw.Text(name),
+            pw.Text(userProfile.name ?? 'Sem nome'),
+            pw.Text(userProfile.email),
             pw.Text('Classificador da frase:'),
           ]),
           // image != null
