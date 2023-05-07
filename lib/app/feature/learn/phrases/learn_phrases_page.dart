@@ -48,7 +48,12 @@ class LearnPhrasesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Frases compartilhadas por'),
+        title: BlocBuilder<LearnPhrasesBloc, LearnPhrasesState>(
+          builder: (context, state) {
+            return Text(
+                '${state.listOriginal.length} frases compartilhadas por');
+          },
+        ),
         // actions: [
         //   IconButton(
         //     tooltip: 'Filtrar frases desta pessoa.',

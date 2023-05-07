@@ -147,7 +147,7 @@ class PhraseList extends StatelessWidget {
     return [
       Text(
         phrase.phrase,
-        style: const TextStyle(fontSize: 18, color: Colors.cyanAccent),
+        style: const TextStyle(fontSize: 18, color: Colors.cyan),
       ),
       Text(
         'Fonte: ${phrase.font}',
@@ -164,7 +164,7 @@ class PhraseList extends StatelessWidget {
     return [
       Text(
         phrase.phrase,
-        style: const TextStyle(fontSize: 18, color: Colors.cyanAccent),
+        style: const TextStyle(fontSize: 18, color: Colors.cyan),
       ),
       Text(
         'Fonte: ${phrase.font}',

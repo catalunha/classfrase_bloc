@@ -188,7 +188,7 @@ class _PhraseSaveViewState extends State<PhraseSaveView> {
                       if (widget.model != null)
                         CheckboxListTile(
                           tileColor: _isDeleted ? Colors.red : null,
-                          title: const Text("Apagar este cadastro ?"),
+                          title: const Text("Apagar esta frase ?"),
                           onChanged: (value) {
                             setState(() {
                               _isDeleted = value ?? false;
