@@ -22,6 +22,8 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
         _repository = repository,
         super(LearnPhrasesState.initial(userProfile)) {
     on<LearnPhrasesEventStart>(_onLearnPhrasesEventStart);
+    on<LearnPhrasesEventSortAlpha>(_onLearnPhrasesEventSortAlpha);
+    on<LearnPhrasesEventSortFolder>(_onLearnPhrasesEventSortFolder);
     add(LearnPhrasesEventStart());
   }
   final List<String> cols = PhraseEntity.selectedCols([
@@ -66,5 +68,15 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
             error: 'Erro na montagem da busca'),
       );
     }
+  }
+
+  FutureOr<void> _onLearnPhrasesEventSortAlpha(
+      LearnPhrasesEventSortAlpha event, Emitter<LearnPhrasesState> emit) {
+    emit(state.copyWith(isSortedByFolder: false));
+  }
+
+  FutureOr<void> _onLearnPhrasesEventSortFolder(
+      LearnPhrasesEventSortFolder event, Emitter<LearnPhrasesState> emit) {
+    emit(state.copyWith(isSortedByFolder: true));
   }
 }
