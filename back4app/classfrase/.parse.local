@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "_default": {
+      "link": "classfrase"
+    },
+    "classfrase": {
+      "applicationId": "Y1ngM4pkO6KRQpHVxYbzTMUGcbDsvoGJtQFODxVY"
+    }
+  }
+}

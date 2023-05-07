@@ -146,13 +146,15 @@ class _AppViewState extends State<AppView> {
           );
         },
         '/pdf/all': (context) {
-          List<PhraseModel>? phraseList =
-              ModalRoute.of(context)!.settings.arguments as List<PhraseModel>?;
-          UserProfileModel userProfile =
-              context.read<AuthenticationBloc>().state.user!.profile!;
+          // List<PhraseModel>? phraseList =
+          //     ModalRoute.of(context)!.settings.arguments as List<PhraseModel>?;
+          // UserProfileModel userProfile =
+          //     context.read<AuthenticationBloc>().state.user!.profile!;
+          Map<String, dynamic> map = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
           return PdfAllPhrasesPage(
-            phraseList: phraseList ?? [],
-            userProfile: userProfile,
+            userProfile: map['userProfile'],
+            phraseList: map['phrases'],
           );
         },
         '/pdf': (context) {
@@ -173,10 +175,10 @@ class _AppViewState extends State<AppView> {
           return const LearnListPage();
         },
         '/learn/phrases': (context) {
-          UserProfileModel userProfile =
+          UserProfileModel person =
               ModalRoute.of(context)!.settings.arguments as UserProfileModel;
           return LearnPhrasesPage(
-            userProfile: userProfile,
+            person: person,
           );
         },
       },

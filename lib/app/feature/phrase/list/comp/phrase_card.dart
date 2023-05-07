@@ -27,7 +27,7 @@ class PhraseCard extends StatelessWidget {
             // tileColor: Colors.yellowAccent,
             title: Text(
               phrase.phrase,
-              // style: AppTextStyles.trailingBold,
+              style: const TextStyle(fontSize: 18, color: Colors.cyan),
             ),
             subtitle: Text(
               phrase.font ?? '',

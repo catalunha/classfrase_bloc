@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/authentication/bloc/authentication_bloc.dart';
-import '../../core/category_classification/bloc/cat_class_bloc.dart';
 import '../../core/models/phrase_model.dart';
 import '../../core/models/user_profile_model.dart';
 import '../../core/repositories/phrase_repository.dart';
 import '../phrase/list/bloc/phrase_list_bloc.dart';
 import '../phrase/list/bloc/phrase_list_event.dart';
+import '../phrase/list/bloc/phrase_list_state.dart';
 import '../phrase/list/comp/phrase_list.dart';
 import '../phrase/list/phases_archived_page.dart';
 import '../phrase/save/phrase_save_page.dart';
@@ -111,32 +111,53 @@ class HomeView extends StatelessWidget {
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              IconButton(
-                tooltip: 'Ordem alfabética das frases',
-                icon: const Icon(AppIconData.sortAlpha),
-                onPressed: () {
-                  context
-                      .read<PhraseListBloc>()
-                      .add(PhraseListEventSortAlpha());
+              BlocBuilder<PhraseListBloc, PhraseListState>(
+                builder: (context, state) {
+                  return IconButton(
+                    tooltip: 'Ordem alfabética das frases',
+                    icon: Icon(
+                      AppIconData.sortAlpha,
+                      color:
+                          !state.isSortedByFolder ? Colors.green : Colors.black,
+                    ),
+                    onPressed: () {
+                      context
+                          .read<PhraseListBloc>()
+                          .add(PhraseListEventSortAlpha());
+                    },
+                  );
                 },
               ),
-              IconButton(
-                tooltip: 'Ordem por folder das frases',
-                icon: const Icon(AppIconData.sortFolder),
-                onPressed: () {
-                  context
-                      .read<PhraseListBloc>()
-                      .add(PhraseListEventSortFolder());
+              BlocBuilder<PhraseListBloc, PhraseListState>(
+                builder: (context, state) {
+                  return IconButton(
+                    tooltip: 'Ordem por folder das frases',
+                    icon: Icon(
+                      AppIconData.sortFolder,
+                      color:
+                          state.isSortedByFolder ? Colors.green : Colors.black,
+                    ),
+                    onPressed: () {
+                      context
+                          .read<PhraseListBloc>()
+                          .add(PhraseListEventSortFolder());
+                    },
+                  );
                 },
               ),
               IconButton(
                 tooltip: 'PDF de todas as frases',
                 icon: const Icon(AppIconData.print),
                 onPressed: () {
-                  List<PhraseModel> phraseList =
+                  List<PhraseModel> list =
                       context.read<PhraseListBloc>().state.list;
-                  Navigator.of(context)
-                      .pushNamed('/pdf/all', arguments: phraseList);
+                  UserProfileModel userProfile =
+                      context.read<AuthenticationBloc>().state.user!.profile!;
+
+                  Navigator.of(context).pushNamed('/pdf/all', arguments: {
+                    'userProfile': userProfile,
+                    'phrases': list,
+                  });
                 },
               ),
               IconButton(
@@ -161,15 +182,6 @@ class HomeView extends StatelessWidget {
           const Expanded(
             child: PhraseList(),
           ),
-          // Expanded(
-          //   child: BlocProvider.value(
-          //     value: BlocProvider.of<CatClassBloc>(context),
-          //     child: const PhraseList(),
-          //   ),
-          // ),
-          // const Expanded(
-          //   child: PhraseList(),
-          // ),
         ],
       ),
     );

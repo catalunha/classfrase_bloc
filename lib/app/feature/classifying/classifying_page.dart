@@ -48,149 +48,176 @@ class _ClassifyingViewState extends State<ClassifyingView> {
       appBar: AppBar(
         title: const Text('Classificando esta frase'),
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: Container(
-                  color: Colors.black12,
-                  child: const Center(
-                    child: Text('Click em partes da frase.'),
+      body: BlocListener<ClassifyingBloc, ClassifyingState>(
+        listenWhen: (previous, current) {
+          return previous.status != current.status;
+        },
+        listener: (context, state) async {
+          if (state.status == ClassifyingStateStatus.error) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(state.error ?? '...')));
+          }
+          if (state.status == ClassifyingStateStatus.success) {
+            Navigator.of(context).pop();
+          }
+          if (state.status == ClassifyingStateStatus.loading) {
+            await showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return const Center(child: CircularProgressIndicator());
+              },
+            );
+          }
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: Container(
+                    color: Colors.black12,
+                    child: const Center(
+                      child: Text('Click em partes da frase.'),
+                    ),
                   ),
                 ),
+                IconButton(
+                  tooltip: 'ou clique aqui para selecionar a frase toda.',
+                  icon: const Icon(Icons.check_circle_outline),
+                  onPressed: () {
+                    context
+                        .read<ClassifyingBloc>()
+                        .add(ClassifyingEventOnSelectAllPhrase());
+                    // widget._classifyingController.onSelectAllPhrase();
+                  },
+                ),
+                IconButton(
+                  tooltip: 'ou clique aqui para limpar toda seleção.',
+                  icon: const Icon(Icons.highlight_off),
+                  onPressed: () {
+                    context
+                        .read<ClassifyingBloc>()
+                        .add(ClassifyingEventOnSelectClearPhrase());
+                    // widget._classifyingController.onSelectNonePhrase();
+                  },
+                ),
+                IconButton(
+                  tooltip: 'ou clique aqui para inverter seleção.',
+                  icon: const Icon(Icons.change_circle_outlined),
+                  onPressed: () {
+                    context
+                        .read<ClassifyingBloc>()
+                        .add(ClassifyingEventOnSelectInversePhrase());
+                    // widget._classifyingController.onSelectInversePhrase();
+                  },
+                ),
+              ],
+            ),
+            BlocBuilder<ClassifyingBloc, ClassifyingState>(
+              builder: (context, state) {
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Center(
+                    child: RichText(
+                      text: TextSpan(
+                        style:
+                            const TextStyle(fontSize: 28, color: Colors.black),
+                        children: buildPhrase(
+                          context: context,
+                          phraseList: state.model.phraseList,
+                          selectedPhrasePosList: state.selectedPosPhraseList,
+                          onSelectPhrase: (value) {
+                            context.read<ClassifyingBloc>().add(
+                                ClassifyingEventOnSelectPhrase(
+                                    phrasePos: value));
+                          },
+                          setState: setStateLocal,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                List<int> selectedPosPhraseList =
+                    context.read<ClassifyingBloc>().state.selectedPosPhraseList;
+                if (selectedPosPhraseList.isNotEmpty) {
+                  context.read<ClassifyingBloc>().add(
+                      ClassifyingEventOnMarkCategoryIfAlreadyClassifiedInPos());
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: BlocProvider.of<ClassifyingBloc>(context),
+                        child: BlocProvider.value(
+                          value: BlocProvider.of<PhraseListBloc>(context),
+                          child: const CategoriesPage(),
+                        ),
+                      ),
+                    ),
+                  );
+                  // Get.toNamed(Routes.phraseCategoryGroup);
+                } else {
+                  const snackBar = SnackBar(
+                    content: Text('Oops. Selecione um trecho da frase.'),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                backgroundColor: Colors.orangeAccent,
               ),
-              IconButton(
-                tooltip: 'ou clique aqui para selecionar a frase toda.',
-                icon: const Icon(Icons.check_circle_outline),
-                onPressed: () {
-                  context
-                      .read<ClassifyingBloc>()
-                      .add(ClassifyingEventOnSelectAllPhrase());
-                  // widget._classifyingController.onSelectAllPhrase();
-                },
+              child: const Text(
+                'Clique aqui para classificar a parte selecionada.',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
               ),
-              IconButton(
-                tooltip: 'ou clique aqui para limpar toda seleção.',
-                icon: const Icon(Icons.highlight_off),
-                onPressed: () {
-                  context
-                      .read<ClassifyingBloc>()
-                      .add(ClassifyingEventOnSelectClearPhrase());
-                  // widget._classifyingController.onSelectNonePhrase();
-                },
-              ),
-              IconButton(
-                tooltip: 'ou clique aqui para inverter seleção.',
-                icon: const Icon(Icons.change_circle_outlined),
-                onPressed: () {
-                  context
-                      .read<ClassifyingBloc>()
-                      .add(ClassifyingEventOnSelectInversePhrase());
-                  // widget._classifyingController.onSelectInversePhrase();
-                },
-              ),
-            ],
-          ),
-          BlocBuilder<ClassifyingBloc, ClassifyingState>(
-            builder: (context, state) {
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: Center(
-                  child: RichText(
-                    text: TextSpan(
-                      style: const TextStyle(fontSize: 28, color: Colors.black),
-                      children: buildPhrase(
-                        context: context,
+            ),
+            Container(
+                color: Colors.black12,
+                child: const Center(
+                    child: Text(
+                        'Você pode reordenar as partes já classificadas a seguir.',
+                        style: TextStyle(fontSize: 12)))),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: BlocBuilder<ClassifyingBloc, ClassifyingState>(
+                  builder: (context, state) {
+                    return ReorderableListView(
+                      onReorder: _onReorder,
+                      children: showClassifications(
+                        categoryAll:
+                            context.read<CatClassBloc>().state.categoryAll,
+                        phraseClassifications: state.model.classifications,
+                        classOrder: state.model.classOrder,
                         phraseList: state.model.phraseList,
-                        selectedPhrasePosList: state.selectedPosPhraseList,
                         onSelectPhrase: (value) {
                           context.read<ClassifyingBloc>().add(
                               ClassifyingEventOnSelectPhrase(phrasePos: value));
                         },
-                        setState: setStateLocal,
+                        onSelectClearPhrase: () => context
+                            .read<ClassifyingBloc>()
+                            .add(ClassifyingEventOnSelectClearPhrase()),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              List<int> selectedPosPhraseList =
-                  context.read<ClassifyingBloc>().state.selectedPosPhraseList;
-              if (selectedPosPhraseList.isNotEmpty) {
-                context.read<ClassifyingBloc>().add(
-                    ClassifyingEventOnMarkCategoryIfAlreadyClassifiedInPos());
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider.value(
-                      value: BlocProvider.of<ClassifyingBloc>(context),
-                      child: BlocProvider.value(
-                        value: BlocProvider.of<PhraseListBloc>(context),
-                        child: const CategoriesPage(),
-                      ),
-                    ),
-                  ),
-                );
-                // Get.toNamed(Routes.phraseCategoryGroup);
-              } else {
-                const snackBar = SnackBar(
-                  content: Text('Oops. Selecione um trecho da frase.'),
-                );
-
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
-              ),
-              backgroundColor: Colors.orangeAccent,
-            ),
-            child: const Text(
-              'Clique aqui para classificar a parte selecionada.',
-              style: TextStyle(
-                color: Colors.black,
               ),
             ),
-          ),
-          Container(
-              color: Colors.black12,
-              child: const Center(
-                  child: Text(
-                      'Você pode reordenar as partes já classificadas a seguir.',
-                      style: TextStyle(fontSize: 12)))),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: BlocBuilder<ClassifyingBloc, ClassifyingState>(
-                builder: (context, state) {
-                  return ReorderableListView(
-                    onReorder: _onReorder,
-                    children: showClassifications(
-                      categoryAll:
-                          context.read<CatClassBloc>().state.categoryAll,
-                      phraseClassifications: state.model.classifications,
-                      classOrder: state.model.classOrder,
-                      phraseList: state.model.phraseList,
-                      onSelectPhrase: (value) {
-                        context.read<ClassifyingBloc>().add(
-                            ClassifyingEventOnSelectPhrase(phrasePos: value));
-                      },
-                      onSelectClearPhrase: () => context
-                          .read<ClassifyingBloc>()
-                          .add(ClassifyingEventOnSelectClearPhrase()),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -157,7 +157,7 @@ class PdfAllPhrasesPage extends StatelessWidget {
             ),
           ),
         ),
-        pw.Text('Pública: ${phrase.isPublic ? "Sim" : "Não"}'),
+        // pw.Text('Pública: ${phrase.isPublic ? "Sim" : "Não"}'),
         pw.Text('Pasta: ${phrase.folder}'),
         pw.Text('Fonte: ${phrase.font}'),
         pw.Row(children: [
@@ -165,7 +165,7 @@ class PdfAllPhrasesPage extends StatelessWidget {
           _UrlText('clique aqui.', phrase.diagramUrl),
         ]),
         pw.Text(
-          'Ou consulte ',
+          'Ou consulte:',
           style: const pw.TextStyle(fontSize: 10),
         ),
         pw.Text(

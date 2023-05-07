@@ -11,13 +11,14 @@ import '../../utils/app_link.dart';
 import 'bloc/learn_phrases_bloc.dart';
 import 'bloc/learn_phrases_event.dart';
 import 'bloc/learn_phrases_state.dart';
+import 'categories_byperson_page.dart';
 import 'comp/person_tile.dart';
 
 class LearnPhrasesPage extends StatelessWidget {
-  final UserProfileModel userProfile;
+  final UserProfileModel person;
   const LearnPhrasesPage({
     Key? key,
-    required this.userProfile,
+    required this.person,
   }) : super(key: key);
 
   @override
@@ -26,25 +27,28 @@ class LearnPhrasesPage extends StatelessWidget {
       create: (context) => PhraseRepository(),
       child: BlocProvider(
         create: (context) => LearnPhrasesBloc(
-          userProfile: userProfile,
+          userProfile: person,
           repository: RepositoryProvider.of<PhraseRepository>(context),
         ),
-        child: const LearnPhrasesView(),
+        child: LearnPhrasesView(person: person),
       ),
     );
   }
 }
 
 class LearnPhrasesView extends StatelessWidget {
+  final UserProfileModel person;
+
   const LearnPhrasesView({
     Key? key,
+    required this.person,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Frases compartilhadas'),
+        title: const Text('Frases compartilhadas por'),
         // actions: [
         //   IconButton(
         //     tooltip: 'Filtrar frases desta pessoa.',
@@ -102,22 +106,78 @@ class LearnPhrasesView extends StatelessWidget {
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                IconButton(
-                  tooltip: 'Ordem alfabética das frases',
-                  icon: const Icon(AppIconData.sortAlpha),
-                  onPressed: () {
-                    context
-                        .read<LearnPhrasesBloc>()
-                        .add(LearnPhrasesEventSortAlpha());
+                BlocBuilder<LearnPhrasesBloc, LearnPhrasesState>(
+                  builder: (context, state) {
+                    return IconButton(
+                      tooltip: 'Filtre por categoria.',
+                      icon: Icon(
+                        AppIconData.search,
+                        color: state.isFiltered ? Colors.green : Colors.black,
+                      ),
+                      onPressed: () {
+                        context.read<LearnPhrasesBloc>().add(
+                            LearnPhrasesEventOnMarkCategoryIfAlreadyClassifiedInPos());
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: BlocProvider.of<LearnPhrasesBloc>(context),
+                              child: const CategoriesByPersonPage(),
+                            ),
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
-                IconButton(
-                  tooltip: 'Ordem por folder das frases',
-                  icon: const Icon(AppIconData.sortFolder),
-                  onPressed: () {
-                    context
-                        .read<LearnPhrasesBloc>()
-                        .add(LearnPhrasesEventSortFolder());
+                BlocBuilder<LearnPhrasesBloc, LearnPhrasesState>(
+                  builder: (context, state) {
+                    return IconButton(
+                      tooltip: 'Remover filtre por categoria.',
+                      icon: Icon(
+                        AppIconData.searchOff,
+                        color: !state.isFiltered ? Colors.green : Colors.black,
+                      ),
+                      onPressed: () {
+                        context
+                            .read<LearnPhrasesBloc>()
+                            .add(LearnPhrasesEventFilterRemoved());
+                      },
+                    );
+                  },
+                ),
+                BlocBuilder<LearnPhrasesBloc, LearnPhrasesState>(
+                  builder: (context, state) {
+                    return IconButton(
+                      tooltip: 'Ordem alfabética das frases',
+                      icon: Icon(
+                        AppIconData.sortAlpha,
+                        color: !state.isSortedByFolder
+                            ? Colors.green
+                            : Colors.black,
+                      ),
+                      onPressed: () {
+                        context
+                            .read<LearnPhrasesBloc>()
+                            .add(LearnPhrasesEventSortAlpha());
+                      },
+                    );
+                  },
+                ),
+                BlocBuilder<LearnPhrasesBloc, LearnPhrasesState>(
+                  builder: (context, state) {
+                    return IconButton(
+                      tooltip: 'Ordem por folder das frases',
+                      icon: Icon(AppIconData.sortFolder,
+                          color: state.isSortedByFolder
+                              ? Colors.green
+                              : Colors.black),
+                      onPressed: () {
+                        context
+                            .read<LearnPhrasesBloc>()
+                            .add(LearnPhrasesEventSortFolder());
+                      },
+                    );
                   },
                 ),
                 IconButton(
@@ -126,8 +186,11 @@ class LearnPhrasesView extends StatelessWidget {
                   onPressed: () {
                     List<PhraseModel> list =
                         context.read<LearnPhrasesBloc>().state.list;
-                    Navigator.of(context)
-                        .pushNamed('/pdf/all', arguments: list);
+
+                    Navigator.of(context).pushNamed('/pdf/all', arguments: {
+                      'userProfile': person,
+                      'phrases': list,
+                    });
                   },
                 ),
               ],
@@ -164,7 +227,8 @@ class LearnPhrasesView extends StatelessWidget {
       if (phrase1.folder != folder) {
         phraseTemp.sort((a, b) => a.phrase.compareTo(b.phrase));
         for (var phrase2 in phraseTemp) {
-          listCard.add(phraseCardWidget(phrase2, context));
+          listCard
+              .add(phraseCardWidget(textsFolder(phrase2), phrase2, context));
         }
 
         listExpansionTile.add(
@@ -223,7 +287,7 @@ class LearnPhrasesView extends StatelessWidget {
     List<PhraseModel> tem = [...phraseList];
     tem.sort((a, b) => a.phrase.compareTo(b.phrase));
     for (var phrase in tem) {
-      list.add(phraseCardWidget(phrase, context));
+      list.add(phraseCardWidget(textsAlpha(phrase), phrase, context));
     }
 
     if (list.isEmpty) {
@@ -232,37 +296,46 @@ class LearnPhrasesView extends StatelessWidget {
     return list;
   }
 
-  Widget phraseCardWidget(PhraseModel phrase, BuildContext context) {
+  List<Widget> textsAlpha(
+    PhraseModel phrase,
+  ) {
+    return [
+      Text(
+        phrase.phrase,
+        style: const TextStyle(fontSize: 18, color: Colors.cyan),
+      ),
+      Text(
+        'Fonte: ${phrase.font}',
+      ),
+      Text(
+        'Folder: ${phrase.folder}',
+      ),
+    ];
+  }
+
+  List<Widget> textsFolder(
+    PhraseModel phrase,
+  ) {
+    return [
+      Text(
+        phrase.phrase,
+        style: const TextStyle(fontSize: 18, color: Colors.cyan),
+      ),
+      Text(
+        'Fonte: ${phrase.font}',
+      ),
+    ];
+  }
+
+  Widget phraseCardWidget(
+      List<Widget> texts, PhraseModel phrase, BuildContext context) {
     return Card(
         key: ValueKey(phrase),
         child: Column(
           children: [
-            Text(
-              phrase.phrase,
-            ),
-            Text(
-              phrase.font ?? '',
-            ),
+            ...texts,
             Wrap(
               children: [
-                // IconButton(
-                //     tooltip: 'Ver classificação desta frase.',
-                //     icon: const Icon(AppIconData.letter),
-                //     onPressed: () {
-                //       // Navigator.of(context)
-                //       //     .pushNamed('/classifying', arguments: phrase);
-                //       // Navigator.of(context).push(
-                //       //   MaterialPageRoute(
-                //       //     builder: (_) => BlocProvider.value(
-                //       //       value: BlocProvider.of<PhraseListBloc>(context),
-                //       //       child: BlocProvider.value(
-                //       //         value: BlocProvider.of<CatClassBloc>(context),
-                //       //         child: ClassifyingPage(model: phrase),
-                //       //       ),
-                //       //     ),
-                //       //   ),
-                //       // );
-                //     }),
                 IconButton(
                   tooltip: 'Ver PDF da classificação desta frase.',
                   icon: const Icon(AppIconData.print),
@@ -283,12 +356,12 @@ class LearnPhrasesView extends StatelessWidget {
                   tooltip: 'Copiar a frase para área de transferência.',
                   icon: const Icon(AppIconData.copy),
                   onPressed: () {
-                    Future<void> _copyToClipboard() async {
+                    Future<void> copyToClipboard() async {
                       await Clipboard.setData(
                           ClipboardData(text: phrase.phrase));
                     }
 
-                    _copyToClipboard();
+                    copyToClipboard();
                     const snackBar =
                         SnackBar(content: Text('Ok. A frase foi copiada.'));
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);

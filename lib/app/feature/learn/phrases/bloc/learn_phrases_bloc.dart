@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
+import '../../../../core/models/phrase_classification_model.dart';
 import '../../../../core/models/phrase_model.dart';
 import '../../../../core/models/user_profile_model.dart';
 import '../../../../core/repositories/phrase_repository.dart';
@@ -24,16 +25,17 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
     on<LearnPhrasesEventStart>(_onLearnPhrasesEventStart);
     on<LearnPhrasesEventSortAlpha>(_onLearnPhrasesEventSortAlpha);
     on<LearnPhrasesEventSortFolder>(_onLearnPhrasesEventSortFolder);
+    on<LearnPhrasesEventOnMarkCategoryIfAlreadyClassifiedInPos>(
+        _onLearnPhrasesEventOnMarkCategoryIfAlreadyClassifiedInPos);
+    on<LearnPhrasesEventFilterPhasesByThisCategory>(
+        _onLearnPhrasesEventFilterPhasesByThisCategory);
+    on<LearnPhrasesEventFilterRemoved>(_onLearnPhrasesEventFilterRemoved);
     add(LearnPhrasesEventStart());
   }
-  final List<String> cols = PhraseEntity.selectedCols([
-    PhraseEntity.phrase,
-    PhraseEntity.folder,
-    PhraseEntity.font,
-    PhraseEntity.diagramUrl,
-    PhraseEntity.isPublic,
-    PhraseEntity.userProfile,
-  ]);
+  final List<String> cols = [
+    ...PhraseEntity.singleCols,
+    ...PhraseEntity.pointerCols,
+  ];
   FutureOr<void> _onLearnPhrasesEventStart(
       LearnPhrasesEventStart event, Emitter<LearnPhrasesState> emit) async {
     emit(state.copyWith(
@@ -60,6 +62,7 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
       emit(state.copyWith(
         status: LearnPhrasesStateStatus.success,
         list: listTemp,
+        listOriginal: listTemp,
       ));
     } catch (e) {
       emit(
@@ -78,5 +81,43 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
   FutureOr<void> _onLearnPhrasesEventSortFolder(
       LearnPhrasesEventSortFolder event, Emitter<LearnPhrasesState> emit) {
     emit(state.copyWith(isSortedByFolder: true));
+  }
+
+  FutureOr<void> _onLearnPhrasesEventOnMarkCategoryIfAlreadyClassifiedInPos(
+      LearnPhrasesEventOnMarkCategoryIfAlreadyClassifiedInPos event,
+      Emitter<LearnPhrasesState> emit) {
+    List<String> categoryIdListNow = [];
+    for (var phrase in state.list) {
+      Map<String, Classification> classifications = phrase.classifications;
+      for (var classification in classifications.values) {
+        categoryIdListNow.addAll(classification.categoryIdList);
+      }
+    }
+    emit(state.copyWith(selectedCategoryIdList: categoryIdListNow));
+  }
+
+  FutureOr<void> _onLearnPhrasesEventFilterPhasesByThisCategory(
+      LearnPhrasesEventFilterPhasesByThisCategory event,
+      Emitter<LearnPhrasesState> emit) {
+    final listTempSearch = [...state.list];
+    final listTemp = [...state.list];
+    for (var phrase in listTempSearch) {
+      Map<String, Classification> classifications = phrase.classifications;
+      bool contain = false;
+      for (var classification in classifications.values) {
+        if (classification.categoryIdList.contains(event.catClassId)) {
+          contain = true;
+        }
+      }
+      if (!contain) {
+        listTemp.removeWhere((element) => element.id == phrase.id);
+      }
+    }
+    emit(state.copyWith(isFiltered: true, list: listTemp));
+  }
+
+  FutureOr<void> _onLearnPhrasesEventFilterRemoved(
+      LearnPhrasesEventFilterRemoved event, Emitter<LearnPhrasesState> emit) {
+    emit(state.copyWith(isFiltered: false, list: state.listOriginal));
   }
 }
