@@ -131,10 +131,7 @@ class _ClassifyingViewState extends State<ClassifyingView> {
                       value: BlocProvider.of<ClassifyingBloc>(context),
                       child: BlocProvider.value(
                         value: BlocProvider.of<PhraseListBloc>(context),
-                        child: BlocProvider.value(
-                          value: BlocProvider.of<CatClassBloc>(context),
-                          child: const CategoriesPage(),
-                        ),
+                        child: const CategoriesPage(),
                       ),
                     ),
                   ),

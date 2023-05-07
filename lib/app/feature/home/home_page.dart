@@ -26,22 +26,15 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider(
       create: (context) => PhraseRepository(),
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) {
-              UserProfileModel userProfile =
-                  context.read<AuthenticationBloc>().state.user!.profile!;
-              return PhraseListBloc(
-                repository: RepositoryProvider.of<PhraseRepository>(context),
-                userProfile: userProfile,
-              );
-            },
-          ),
-          BlocProvider(
-            create: (context) => CatClassBloc(),
-          ),
-        ],
+      child: BlocProvider(
+        create: (context) {
+          UserProfileModel userProfile =
+              context.read<AuthenticationBloc>().state.user!.profile!;
+          return PhraseListBloc(
+            repository: RepositoryProvider.of<PhraseRepository>(context),
+            userProfile: userProfile,
+          );
+        },
         child: const HomeView(),
       ),
     );
@@ -165,12 +158,15 @@ class HomeView extends StatelessWidget {
               ),
             ],
           ),
-          Expanded(
-            child: BlocProvider.value(
-              value: BlocProvider.of<CatClassBloc>(context),
-              child: const PhraseList(),
-            ),
+          const Expanded(
+            child: PhraseList(),
           ),
+          // Expanded(
+          //   child: BlocProvider.value(
+          //     value: BlocProvider.of<CatClassBloc>(context),
+          //     child: const PhraseList(),
+          //   ),
+          // ),
           // const Expanded(
           //   child: PhraseList(),
           // ),

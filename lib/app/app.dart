@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/authentication/authentication.dart';
+import 'core/category_classification/bloc/cat_class_bloc.dart';
 import 'core/models/phrase_model.dart';
 import 'core/models/user_model.dart';
 import 'core/models/user_profile_model.dart';
@@ -48,10 +49,17 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: _userRepository,
-      child: BlocProvider(
-        create: (_) => AuthenticationBloc(
-          userRepository: _userRepository,
-        )..add(AuthenticationEventInitial()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => AuthenticationBloc(
+              userRepository: _userRepository,
+            )..add(AuthenticationEventInitial()),
+          ),
+          BlocProvider(
+            create: (context) => CatClassBloc(),
+          ),
+        ],
         child: const AppView(),
       ),
     );

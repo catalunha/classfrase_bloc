@@ -155,10 +155,7 @@ class PhraseList extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (_) => BlocProvider.value(
                     value: BlocProvider.of<PhraseListBloc>(context),
-                    child: BlocProvider.value(
-                      value: BlocProvider.of<CatClassBloc>(context),
-                      child: ClassifyingPage(model: phrase),
-                    ),
+                    child: ClassifyingPage(model: phrase),
                   ),
                 ),
               );
