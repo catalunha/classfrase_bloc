@@ -23,7 +23,6 @@ class LearnSaveBloc extends Bloc<LearnSaveEvent, LearnSaveState> {
         _learnRepository = learnRepository,
         super(LearnSaveState.initial()) {
     on<LearnSaveEventFormSubmitted>(_onLearnSaveEventFormSubmitted);
-    on<LearnSaveEventDelete>(_onLearnSaveEventDelete);
   }
   final List<String> cols = UserProfileEntity.selectedCols([
     UserProfileEntity.email,
@@ -52,19 +51,6 @@ class LearnSaveBloc extends Bloc<LearnSaveEvent, LearnSaveState> {
       emit(state.copyWith(
           status: LearnSaveStateStatus.error,
           error: 'Erro ao salvar aprendizado'));
-    }
-  }
-
-  FutureOr<void> _onLearnSaveEventDelete(
-      LearnSaveEventDelete event, Emitter<LearnSaveState> emit) async {
-    try {
-      emit(state.copyWith(status: LearnSaveStateStatus.loading));
-      await _learnRepository.delete(state.model!.id!);
-      emit(state.copyWith(status: LearnSaveStateStatus.delete));
-    } catch (e) {
-      emit(state.copyWith(
-          status: LearnSaveStateStatus.error,
-          error: 'Erro ao deletar pessoa do aprendizado'));
     }
   }
 }

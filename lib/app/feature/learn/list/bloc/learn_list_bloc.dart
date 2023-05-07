@@ -24,6 +24,8 @@ class LearnListBloc extends Bloc<LearnListEvent, LearnListState> {
     on<LearnListEventStart>(_onLearnListEventStart);
     on<LearnListEventUpdateList>(_onLearnListEventUpdateList);
     on<LearnListEventRemoveFromList>(_onLearnListEventRemoveFromList);
+    on<LearnListEventDelete>(_onLearnListEventDelete);
+
     add(LearnListEventStart());
   }
   final List<String> cols = [
@@ -78,6 +80,21 @@ class LearnListBloc extends Bloc<LearnListEvent, LearnListState> {
       List<LearnModel> listTemp = [...state.list];
       listTemp.removeAt(index);
       emit(state.copyWith(list: listTemp));
+    }
+  }
+
+  FutureOr<void> _onLearnListEventDelete(
+      LearnListEventDelete event, Emitter<LearnListState> emit) async {
+    try {
+      emit(state.copyWith(status: LearnListStateStatus.loading));
+      await _repository.delete(event.id);
+      add(LearnListEventRemoveFromList(event.id));
+      emit(state.copyWith(status: LearnListStateStatus.success));
+    } catch (e) {
+      print(e);
+      emit(state.copyWith(
+          status: LearnListStateStatus.error,
+          error: 'Erro ao deletar pessoa do aprendizado'));
     }
   }
 }

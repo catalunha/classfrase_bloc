@@ -17,3 +17,8 @@ class LearnListEventRemoveFromList extends LearnListEvent {
     this.id,
   );
 }
+
+class LearnListEventDelete extends LearnListEvent {
+  final String id;
+  LearnListEventDelete(this.id);
+}
