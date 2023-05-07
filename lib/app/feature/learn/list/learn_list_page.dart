@@ -79,6 +79,10 @@ class LearnListView extends StatelessWidget {
                       final item = list[index];
                       return Card(
                         child: ListTile(
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/learn/phrases',
+                                arguments: item.person);
+                          },
                           title: Text(item.person.email),
                           subtitle: Text('${item.person.name}'),
                           trailing: IconButton(
