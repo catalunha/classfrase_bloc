@@ -54,23 +54,6 @@ class LearnPhrasesView extends StatelessWidget {
                 '${state.listOriginal.length} frases compartilhadas por');
           },
         ),
-        // actions: [
-        //   IconButton(
-        //     tooltip: 'Filtrar frases desta pessoa.',
-        //     icon: const Icon(AppIconData.search),
-        //     onPressed: () async {
-        //       await _learnController.onMarkCategoryIfAlreadyClassified();
-        //       Get.toNamed(Routes.learnCategoriesByPerson);
-        //     },
-        //   ),
-        //   IconButton(
-        //     tooltip: 'Remover filtro',
-        //     icon: const Icon(AppIconData.search_off),
-        //     onPressed: () {
-        //       _learnController.removeFilter();
-        //     },
-        //   ),
-        // ],
       ),
       body: BlocListener<LearnPhrasesBloc, LearnPhrasesState>(
         listenWhen: (previous, current) {
@@ -254,10 +237,13 @@ class LearnPhrasesView extends StatelessWidget {
         phraseTemp.clear();
         folder = phrase1.folder;
       }
-      // listCard.add(phraseCardWidget(phrase, context));
       phraseTemp.add(phrase1);
     }
-    if (phraseList.isNotEmpty) {
+    if (phraseTemp.isNotEmpty) {
+      phraseTemp.sort((a, b) => a.phrase.compareTo(b.phrase));
+      for (var phrase2 in phraseTemp) {
+        listCard.add(phraseCardWidget(textsFolder(phrase2), phrase2, context));
+      }
       listExpansionTile.add(
         Card(
           shape: RoundedRectangleBorder(

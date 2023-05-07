@@ -43,17 +43,15 @@ class PhraseList extends StatelessWidget {
           );
         }
       },
-      child: Expanded(
-        child: SingleChildScrollView(
-          child: BlocBuilder<PhraseListBloc, PhraseListState>(
-            builder: (context, state) {
-              return Column(
-                children: state.isSortedByFolder
-                    ? buildPhraseListOrderedByFolder(context, state.list)
-                    : buildPhraseListOrderedByAlpha(context, state.list),
-              );
-            },
-          ),
+      child: SingleChildScrollView(
+        child: BlocBuilder<PhraseListBloc, PhraseListState>(
+          builder: (context, state) {
+            return Column(
+              children: state.isSortedByFolder
+                  ? buildPhraseListOrderedByFolder(context, state.list)
+                  : buildPhraseListOrderedByAlpha(context, state.list),
+            );
+          },
         ),
       ),
     );
@@ -94,10 +92,13 @@ class PhraseList extends StatelessWidget {
         phraseTemp.clear();
         folder = phrase1.folder;
       }
-      // listCard.add(phraseCardWidget(phrase, context));
       phraseTemp.add(phrase1);
     }
-    if (phraseList.isNotEmpty) {
+    if (phraseTemp.isNotEmpty) {
+      phraseTemp.sort((a, b) => a.phrase.compareTo(b.phrase));
+      for (var phrase2 in phraseTemp) {
+        listCard.add(phraseCardWidget(textsFolder(phrase2), phrase2, context));
+      }
       listExpansionTile.add(
         Card(
           shape: RoundedRectangleBorder(
@@ -145,9 +146,28 @@ class PhraseList extends StatelessWidget {
     PhraseModel phrase,
   ) {
     return [
-      Text(
-        phrase.phrase,
-        style: const TextStyle(fontSize: 18, color: Colors.cyan),
+      // Text(
+      //   phrase.phrase,
+      //   style: const TextStyle(fontSize: 18, color: Colors.cyan),
+      // ),
+      Center(
+        child: Row(
+          children: [
+            if (phrase.isPublic)
+              const Tooltip(
+                  message: 'Esta frase é pública.',
+                  child: Icon(
+                    AppIconData.public,
+                    color: Colors.orangeAccent,
+                  )),
+            Expanded(
+              child: Text(
+                phrase.phrase,
+                style: const TextStyle(fontSize: 18, color: Colors.cyan),
+              ),
+            ),
+          ],
+        ),
       ),
       Text(
         'Fonte: ${phrase.font}',
@@ -162,9 +182,24 @@ class PhraseList extends StatelessWidget {
     PhraseModel phrase,
   ) {
     return [
-      Text(
-        phrase.phrase,
-        style: const TextStyle(fontSize: 18, color: Colors.cyan),
+      Center(
+        child: Row(
+          children: [
+            if (phrase.isPublic)
+              const Tooltip(
+                  message: 'Esta frase é pública.',
+                  child: Icon(
+                    AppIconData.public,
+                    color: Colors.orangeAccent,
+                  )),
+            Expanded(
+              child: Text(
+                phrase.phrase,
+                style: const TextStyle(fontSize: 18, color: Colors.cyan),
+              ),
+            ),
+          ],
+        ),
       ),
       Text(
         'Fonte: ${phrase.font}',
@@ -177,6 +212,8 @@ class PhraseList extends StatelessWidget {
     return Card(
       key: ValueKey(phrase),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ...texts,
           // ...textsAlpha(phrase),

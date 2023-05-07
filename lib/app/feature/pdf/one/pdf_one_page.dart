@@ -58,7 +58,7 @@ class PdfOneView extends StatelessWidget {
           print('one ${state.model.classifications}');
           if (state.model.classifications.isEmpty) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Text('Não existem classificações para esta frase.'),
             );
           } else {
             return PdfPreview(

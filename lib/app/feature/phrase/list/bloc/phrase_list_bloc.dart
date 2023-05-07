@@ -113,6 +113,8 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
     if (index >= 0) {
       List<PhraseModel> listTemp = [...state.list];
       listTemp.replaceRange(index, index + 1, [event.model]);
+      listTemp.sort((a, b) => a.folder.compareTo(b.folder));
+
       emit(state.copyWith(list: listTemp));
     }
   }
@@ -123,6 +125,7 @@ class PhraseListBloc extends Bloc<PhraseListEvent, PhraseListState> {
     if (index >= 0) {
       List<PhraseModel> listTemp = [...state.list];
       listTemp.removeAt(index);
+      listTemp.sort((a, b) => a.folder.compareTo(b.folder));
       emit(state.copyWith(list: listTemp));
     }
   }
