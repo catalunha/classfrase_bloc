@@ -146,10 +146,6 @@ class PhraseList extends StatelessWidget {
     PhraseModel phrase,
   ) {
     return [
-      // Text(
-      //   phrase.phrase,
-      //   style: const TextStyle(fontSize: 18, color: Colors.cyan),
-      // ),
       Center(
         child: Row(
           children: [
@@ -216,25 +212,12 @@ class PhraseList extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ...texts,
-          // ...textsAlpha(phrase),
-          // Text(
-          //   phrase.phrase,
-          //   style: const TextStyle(fontSize: 18, color: Colors.cyan),
-          // ),
-          // Text(
-          //   'Fonte: ${phrase.font}',
-          // ),
-          // Text(
-          //   'Folder: ${phrase.folder}',
-          // ),
           Wrap(
             children: [
               IconButton(
                   tooltip: 'Classificar esta frase',
                   icon: const Icon(AppIconData.letter),
                   onPressed: () {
-                    // Navigator.of(context)
-                    //     .pushNamed('/classifying', arguments: phrase);
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => BlocProvider.value(
