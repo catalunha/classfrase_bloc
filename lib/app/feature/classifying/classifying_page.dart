@@ -129,7 +129,7 @@ class _ClassifyingViewState extends State<ClassifyingView> {
                             const TextStyle(fontSize: 28, color: Colors.black),
                         children: buildPhrase(
                           context: context,
-                          phraseList: state.model.phraseList,
+                          phraseList: state.model.phraseList ?? [],
                           selectedPhrasePosList: state.selectedPosPhraseList,
                           onSelectPhrase: (value) {
                             context.read<ClassifyingBloc>().add(
@@ -200,9 +200,10 @@ class _ClassifyingViewState extends State<ClassifyingView> {
                       children: showClassifications(
                         categoryAll:
                             context.read<CatClassBloc>().state.categoryAll,
-                        phraseClassifications: state.model.classifications,
-                        classOrder: state.model.classOrder,
-                        phraseList: state.model.phraseList,
+                        phraseClassifications:
+                            state.model.classifications ?? {},
+                        classOrder: state.model.classOrder ?? [],
+                        phraseList: state.model.phraseList ?? [],
                         onSelectPhrase: (value) {
                           context.read<ClassifyingBloc>().add(
                               ClassifyingEventOnSelectPhrase(phrasePos: value));
@@ -229,7 +230,7 @@ class _ClassifyingViewState extends State<ClassifyingView> {
       }
     });
     List<String> classOrderTemp =
-        context.read<ClassifyingBloc>().state.model.classOrder;
+        context.read<ClassifyingBloc>().state.model.classOrder ?? [];
     // widget._classifyingController.phrase.classOrder;
     String resourceId = classOrderTemp[oldIndex];
     classOrderTemp.removeAt(oldIndex);

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 
-import '../../../../core/models/phrase_classification_model.dart';
 import '../../../../core/models/phrase_model.dart';
 import '../../../../core/models/user_profile_model.dart';
 import '../../../../core/repositories/phrase_repository.dart';
@@ -19,6 +18,8 @@ class PhraseSaveBloc extends Bloc<PhraseSaveEvent, PhraseSaveState> {
   })  : _userProfile = userProfile,
         _repository = repository,
         super(PhraseSaveState.initial(model)) {
+    print('PhraseSaveBloc state.model1: ${state.model}');
+
     on<PhraseSaveEventFormSubmitted>(_onPhraseSaveEventFormSubmitted);
     on<PhraseSaveEventDelete>(_onPhraseSaveEventDelete);
   }
@@ -27,6 +28,8 @@ class PhraseSaveBloc extends Bloc<PhraseSaveEvent, PhraseSaveState> {
       PhraseSaveEventFormSubmitted event, Emitter<PhraseSaveState> emit) async {
     emit(state.copyWith(status: PhraseSaveStateStatus.loading));
     try {
+      print('PhraseSaveBloc state.model2: ${state.model}');
+
       PhraseModel model;
       if (state.model == null) {
         model = PhraseModel(
@@ -38,8 +41,6 @@ class PhraseSaveBloc extends Bloc<PhraseSaveEvent, PhraseSaveState> {
           diagramUrl: event.diagramUrl,
           note: event.note,
           isPublic: event.isPublic,
-          classifications: <String, Classification>{},
-          classOrder: [],
         );
       } else {
         model = state.model!.copyWith(

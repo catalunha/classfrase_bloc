@@ -175,6 +175,7 @@ class _PhraseSaveViewState extends State<PhraseSaveView> {
                       AppTextFormField(
                         label: 'Observações sobre esta frase',
                         controller: _noteTEC,
+                        maxLines: 3,
                       ),
                       CheckboxListTile(
                         title: const Text("Esta frase é pública ?"),
@@ -196,6 +197,7 @@ class _PhraseSaveViewState extends State<PhraseSaveView> {
                           },
                           value: _isDeleted,
                         ),
+                      Text('Id: ${widget.model?.id}'),
                       const SizedBox(height: 70),
                     ],
                   ),

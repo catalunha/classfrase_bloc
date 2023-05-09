@@ -7,25 +7,25 @@ class PhraseModel {
   final String? id;
   final UserProfileModel userProfile;
   final String phrase;
-  List<String> phraseList;
+  List<String>? phraseList;
 
-  final Map<String, Classification> classifications;
-  final List<String> classOrder;
+  final Map<String, Classification>? classifications;
+  final List<String>? classOrder;
 
-  final String folder;
+  final String? folder;
   final String? font;
   final String? diagramUrl;
   final String? note;
 
-  final bool isArchived;
-  final bool isPublic;
+  final bool? isArchived;
+  final bool? isPublic;
   PhraseModel({
     this.id,
     required this.userProfile,
     required this.phrase,
-    required this.phraseList,
-    required this.classifications,
-    required this.classOrder,
+    this.phraseList,
+    this.classifications,
+    this.classOrder,
     this.folder = '/',
     this.font,
     this.diagramUrl,
@@ -61,50 +61,6 @@ class PhraseModel {
       note: note ?? this.note,
       isArchived: isArchived ?? this.isArchived,
       isPublic: isPublic ?? this.isPublic,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
-
-    if (id != null) {
-      result.addAll({'id': id});
-    }
-    result.addAll({'userProfile': userProfile.toMap()});
-    result.addAll({'phrase': phrase});
-    result.addAll({'phraseList': phraseList});
-    result.addAll({'classifications': classifications});
-    result.addAll({'classOrder': classOrder});
-    result.addAll({'folder': folder});
-    if (font != null) {
-      result.addAll({'font': font});
-    }
-    if (diagramUrl != null) {
-      result.addAll({'diagramUrl': diagramUrl});
-    }
-    if (note != null) {
-      result.addAll({'note': note});
-    }
-    result.addAll({'isArchived': isArchived});
-    result.addAll({'isPublic': isPublic});
-
-    return result;
-  }
-
-  factory PhraseModel.fromMap(Map<String, dynamic> map) {
-    return PhraseModel(
-      id: map['id'],
-      userProfile: UserProfileModel.fromMap(map['userProfile']),
-      phrase: map['phrase'] ?? '',
-      phraseList: List<String>.from(map['phraseList']),
-      classifications: Map<String, Classification>.from(map['classifications']),
-      classOrder: List<String>.from(map['classOrder']),
-      folder: map['folder'] ?? '',
-      font: map['font'],
-      diagramUrl: map['diagramUrl'],
-      note: map['note'],
-      isArchived: map['isArchived'] ?? false,
-      isPublic: map['isPublic'] ?? false,
     );
   }
 

@@ -85,8 +85,8 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
   FutureOr<void> _onClassifyingEventOnSelectAllPhrase(
       ClassifyingEventOnSelectAllPhrase event, Emitter<ClassifyingState> emit) {
     List<int> listTemp = [];
-    for (var wordPos = 0; wordPos < state.model.phraseList.length; wordPos++) {
-      if (state.model.phraseList[wordPos] != ' ') {
+    for (var wordPos = 0; wordPos < state.model.phraseList!.length; wordPos++) {
+      if (state.model.phraseList![wordPos] != ' ') {
         listTemp.add(wordPos);
       }
     }
@@ -102,8 +102,8 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
   FutureOr<void> _onClassifyingEventOnSelectInversePhrase(
       ClassifyingEventOnSelectInversePhrase event,
       Emitter<ClassifyingState> emit) {
-    for (var wordPos = 0; wordPos < state.model.phraseList.length; wordPos++) {
-      if (state.model.phraseList[wordPos] != ' ') {
+    for (var wordPos = 0; wordPos < state.model.phraseList!.length; wordPos++) {
+      if (state.model.phraseList![wordPos] != ' ') {
         add(ClassifyingEventOnSelectPhrase(phrasePos: wordPos));
       }
     }
@@ -112,7 +112,7 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
   FutureOr<void> _onClassifyingEventOnMarkCategoryIfAlreadyClassifiedInPos(
       ClassifyingEventOnMarkCategoryIfAlreadyClassifiedInPos event,
       Emitter<ClassifyingState> emit) {
-    Map<String, Classification> classifications = state.model.classifications;
+    Map<String, Classification> classifications = state.model.classifications!;
     List<int> posPhraseListNow = [...state.selectedPosPhraseList];
     posPhraseListNow.sort();
     List<String> categoryIdListNow = [];
@@ -142,7 +142,8 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
     try {
       emit(state.copyWith(status: ClassifyingStateStatus.loading));
 
-      Map<String, Classification> classifications = state.model.classifications;
+      Map<String, Classification> classifications =
+          state.model.classifications!;
 
       List<int> posPhraseListNow = [...state.selectedPosPhraseList];
       posPhraseListNow.sort();
@@ -156,10 +157,10 @@ class ClassifyingBloc extends Bloc<ClassifyingEvent, ClassifyingState> {
       }
       Classification classificationNew = Classification(
           posPhraseList: posPhraseListNow, categoryIdList: categoryIdListNow);
-      List<String> classOrderTemp = [...state.model.classOrder];
+      List<String> classOrderTemp = [...state.model.classOrder!];
       Map<String, Classification> classificationsTemp =
           <String, Classification>{};
-      classificationsTemp.addAll(state.model.classifications);
+      classificationsTemp.addAll(state.model.classifications!);
 
       if (classificationNew.categoryIdList.isEmpty) {
         classOrderTemp.remove(classificationsId);

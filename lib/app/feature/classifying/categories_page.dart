@@ -40,7 +40,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   children: buildPhrase(
                     context: context,
                     phraseList:
-                        context.read<ClassifyingBloc>().state.model.phraseList,
+                        context.read<ClassifyingBloc>().state.model.phraseList!,
                     selectedPhrasePosList: context
                         .read<ClassifyingBloc>()
                         .state

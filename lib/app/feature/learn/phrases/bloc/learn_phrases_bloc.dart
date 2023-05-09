@@ -88,7 +88,7 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
       Emitter<LearnPhrasesState> emit) {
     List<String> categoryIdListNow = [];
     for (var phrase in state.list) {
-      Map<String, Classification> classifications = phrase.classifications;
+      Map<String, Classification> classifications = phrase.classifications!;
       for (var classification in classifications.values) {
         categoryIdListNow.addAll(classification.categoryIdList);
       }
@@ -102,7 +102,7 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
     final listTempSearch = [...state.list];
     final listTemp = [...state.list];
     for (var phrase in listTempSearch) {
-      Map<String, Classification> classifications = phrase.classifications;
+      Map<String, Classification> classifications = phrase.classifications!;
       bool contain = false;
       for (var classification in classifications.values) {
         if (classification.categoryIdList.contains(event.catClassId)) {

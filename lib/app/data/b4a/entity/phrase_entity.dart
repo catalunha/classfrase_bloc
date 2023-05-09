@@ -84,9 +84,10 @@ class PhraseEntity {
   }
 
   PhraseModel toModel(ParseObject parseObject, [List<String> cols = const []]) {
-    Map<String, Classification> classifications = <String, Classification>{};
+    Map<String, Classification>? classifications;
     if (parseObject.get<Map<String, dynamic>>(PhraseEntity.classifications) !=
         null) {
+      classifications = <String, Classification>{};
       Map<String, dynamic> tempClass =
           parseObject.get<Map<String, dynamic>>(PhraseEntity.classifications)!;
       for (var item in tempClass.entries) {
@@ -105,7 +106,7 @@ class PhraseEntity {
                   .get<List<dynamic>>(PhraseEntity.phraseList)!
                   .map((e) => e.toString())
                   .toList()
-              : [],
+              : null,
       classifications: classifications,
       classOrder:
           parseObject.get<List<dynamic>>(PhraseEntity.classOrder) != null
@@ -113,13 +114,13 @@ class PhraseEntity {
                   .get<List<dynamic>>(PhraseEntity.classOrder)!
                   .map((e) => e.toString())
                   .toList()
-              : [],
-      folder: parseObject.get<String>(PhraseEntity.folder) ?? '/',
+              : null,
+      folder: parseObject.get<String>(PhraseEntity.folder),
       font: parseObject.get<String>(PhraseEntity.font),
       diagramUrl: parseObject.get<String>(PhraseEntity.diagramUrl),
       note: parseObject.get<String>(PhraseEntity.note),
-      isArchived: parseObject.get<bool>(PhraseEntity.isArchived) ?? false,
-      isPublic: parseObject.get<bool>(PhraseEntity.isPublic) ?? false,
+      isArchived: parseObject.get<bool>(PhraseEntity.isArchived),
+      isPublic: parseObject.get<bool>(PhraseEntity.isPublic),
     );
     return model;
   }
@@ -127,27 +128,46 @@ class PhraseEntity {
   Future<ParseObject> toParse(PhraseModel model) async {
     final parseObject = ParseObject(PhraseEntity.className);
     parseObject.objectId = model.id;
-
     parseObject.set(
         PhraseEntity.userProfile,
         (ParseObject(UserProfileEntity.className)
               ..objectId = model.userProfile.id)
             .toPointer());
     parseObject.set(PhraseEntity.phrase, model.phrase);
-    parseObject.set(PhraseEntity.phraseList, model.phraseList);
-    var data = <String, dynamic>{};
-    for (var item in model.classifications.entries) {
-      data[item.key] = item.value.toMap();
+    if (model.phraseList != null) {
+      parseObject.set(PhraseEntity.phraseList, model.phraseList);
     }
-    parseObject.set(PhraseEntity.classifications, data);
-    parseObject.set(PhraseEntity.classOrder, model.classOrder);
-    parseObject.set(PhraseEntity.folder, model.folder);
-    parseObject.set(PhraseEntity.font, model.font);
-    parseObject.set(PhraseEntity.folder, model.folder);
-    parseObject.set(PhraseEntity.diagramUrl, model.diagramUrl);
-    parseObject.set(PhraseEntity.note, model.note);
-    parseObject.set(PhraseEntity.isArchived, model.isArchived);
-    parseObject.set(PhraseEntity.isPublic, model.isPublic);
+    if (model.classifications != null) {
+      var data = <String, dynamic>{};
+      for (var item in model.classifications!.entries) {
+        data[item.key] = item.value.toMap();
+      }
+      parseObject.set(PhraseEntity.classifications, data);
+    }
+    if (model.classOrder != null) {
+      parseObject.set(PhraseEntity.classOrder, model.classOrder);
+    }
+    if (model.folder != null) {
+      parseObject.set(PhraseEntity.folder, model.folder);
+    }
+    if (model.font != null) {
+      parseObject.set(PhraseEntity.font, model.font);
+    }
+    if (model.folder != null) {
+      parseObject.set(PhraseEntity.folder, model.folder);
+    }
+    if (model.diagramUrl != null) {
+      parseObject.set(PhraseEntity.diagramUrl, model.diagramUrl);
+    }
+    if (model.note != null) {
+      parseObject.set(PhraseEntity.note, model.note);
+    }
+    if (model.isArchived != null) {
+      parseObject.set(PhraseEntity.isArchived, model.isArchived);
+    }
+    if (model.isPublic != null) {
+      parseObject.set(PhraseEntity.isPublic, model.isPublic);
+    }
 
     return parseObject;
   }

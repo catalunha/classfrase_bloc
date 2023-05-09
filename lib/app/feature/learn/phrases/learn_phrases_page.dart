@@ -209,7 +209,7 @@ class LearnPhrasesView extends StatelessWidget {
     List<PhraseModel> phraseTemp = [];
     String folder = '';
     if (phraseList.isNotEmpty) {
-      folder = phraseList.first.folder;
+      folder = phraseList.first.folder!;
     }
     for (var phrase1 in phraseList) {
       if (phrase1.folder != folder) {
@@ -235,7 +235,7 @@ class LearnPhrasesView extends StatelessWidget {
         );
         listCard.clear();
         phraseTemp.clear();
-        folder = phrase1.folder;
+        folder = phrase1.folder!;
       }
       phraseTemp.add(phrase1);
     }

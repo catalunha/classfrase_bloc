@@ -55,8 +55,8 @@ class PdfOneView extends StatelessWidget {
       appBar: AppBar(title: const Text('ClassFrase em PDF')),
       body: BlocBuilder<PdfOneBloc, PdfOneState>(
         builder: (context, state) {
-          print('one ${state.model.classifications}');
-          if (state.model.classifications.isEmpty) {
+          if (state.model.classifications == null ||
+              state.model.classifications!.isEmpty) {
             return const Center(
               child: Text('Não existem classificações para esta frase.'),
             );
@@ -99,7 +99,7 @@ class PdfOneView extends StatelessWidget {
         footer: (pw.Context context) => footerPage(context),
         build: (pw.Context context) => <pw.Widget>[
           headerClassificator(model.userProfile),
-          phraseText(model.phraseList.join()),
+          phraseText(model.phrase),
           pw.Text(
             'Pasta: ${model.folder}',
             style: const pw.TextStyle(fontSize: 10),
@@ -231,73 +231,75 @@ class PdfOneView extends StatelessWidget {
   ) {
     List<pw.Widget> lineList = [];
 
-    for (var classId in model.classOrder) {
-      Classification classification = model.classifications[classId]!;
+    if (model.classifications != null && model.classOrder != null) {
+      for (var classId in model.classOrder!) {
+        Classification classification = model.classifications![classId]!;
 
-      // +++ Montando frase destacando a seleção
-      List<pw.InlineSpan> listSpan = [];
-      for (var i = 0; i < model.phraseList.length; i++) {
-        listSpan.add(pw.TextSpan(
-          text: model.phraseList[i],
-          style: model.phraseList[i] != ' ' &&
-                  classification.posPhraseList.contains(i)
-              ? pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.orange900,
-                  decoration: pw.TextDecoration.underline,
-                  decorationStyle: pw.TextDecorationStyle.solid,
-                )
-              : null,
-        ));
-      }
-      pw.RichText richText = pw.RichText(
-        text: pw.TextSpan(
-          style: const pw.TextStyle(fontSize: 10, color: PdfColors.black),
-          children: listSpan,
-        ),
-      );
-
-      // +++ Montando classificações desta seleção
-      List<pw.Widget> categoryWidgetList = [];
-      List<String> categoryIdList = classification.categoryIdList;
-      List<String> classOrdemList = [];
-      // List<CatClassModel> categoryAll =
-      //     context.read<CatClassBloc>().categoryAll;
-
-      for (var id in categoryIdList) {
-        CatClassModel? catClassModel =
-            categoryAll.firstWhereOrNull((catClass) => catClass.id == id);
-        if (catClassModel != null) {
-          classOrdemList.add(catClassModel.ordem);
+        // +++ Montando frase destacando a seleção
+        List<pw.InlineSpan> listSpan = [];
+        for (var i = 0; i < model.phraseList!.length; i++) {
+          listSpan.add(pw.TextSpan(
+            text: model.phraseList![i],
+            style: model.phraseList![i] != ' ' &&
+                    classification.posPhraseList.contains(i)
+                ? pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.orange900,
+                    decoration: pw.TextDecoration.underline,
+                    decorationStyle: pw.TextDecorationStyle.solid,
+                  )
+                : null,
+          ));
         }
-      }
+        pw.RichText richText = pw.RichText(
+          text: pw.TextSpan(
+            style: const pw.TextStyle(fontSize: 10, color: PdfColors.black),
+            children: listSpan,
+          ),
+        );
 
-      if (classOrdemList.isNotEmpty) {
-        classOrdemList.sort();
+        // +++ Montando classificações desta seleção
+        List<pw.Widget> categoryWidgetList = [];
+        List<String> categoryIdList = classification.categoryIdList;
+        List<String> classOrdemList = [];
+        // List<CatClassModel> categoryAll =
+        //     context.read<CatClassBloc>().categoryAll;
 
-        for (var element in classOrdemList) {
-          categoryWidgetList.add(
-            pw.Text('      $element'),
-
-            // pw.Bullet(
-            //   text: element,
-            //   style: const pw.TextStyle(fontSize: 10, color: PdfColors.black),
-            // ),
-          );
+        for (var id in categoryIdList) {
+          CatClassModel? catClassModel =
+              categoryAll.firstWhereOrNull((catClass) => catClass.id == id);
+          if (catClassModel != null) {
+            classOrdemList.add(catClassModel.ordem);
+          }
         }
-      }
 
-      // Juntando frase e classificações
-      lineList.add(
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: <pw.Widget>[
-            richText,
-            ...categoryWidgetList,
-            pw.SizedBox(height: 5)
-          ],
-        ),
-      );
+        if (classOrdemList.isNotEmpty) {
+          classOrdemList.sort();
+
+          for (var element in classOrdemList) {
+            categoryWidgetList.add(
+              pw.Text('      $element'),
+
+              // pw.Bullet(
+              //   text: element,
+              //   style: const pw.TextStyle(fontSize: 10, color: PdfColors.black),
+              // ),
+            );
+          }
+        }
+
+        // Juntando frase e classificações
+        lineList.add(
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: <pw.Widget>[
+              richText,
+              ...categoryWidgetList,
+              pw.SizedBox(height: 5)
+            ],
+          ),
+        );
+      }
     }
     return lineList;
   }
