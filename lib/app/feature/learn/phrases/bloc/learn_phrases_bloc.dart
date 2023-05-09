@@ -50,7 +50,6 @@ class LearnPhrasesBloc extends Bloc<LearnPhrasesEvent, LearnPhrasesState> {
           (ParseObject(UserProfileEntity.className)..objectId = _userProfile.id)
               .toPointer());
       query.whereEqualTo(PhraseEntity.isPublic, true);
-      query.whereEqualTo(PhraseEntity.isPublic, true);
 
       query.orderByAscending(PhraseEntity.folder);
       List<PhraseModel> listTemp = await _repository.list(

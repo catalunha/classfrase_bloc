@@ -24,10 +24,11 @@ class LearnSaveBloc extends Bloc<LearnSaveEvent, LearnSaveState> {
         super(LearnSaveState.initial()) {
     on<LearnSaveEventFormSubmitted>(_onLearnSaveEventFormSubmitted);
   }
-  final List<String> cols = UserProfileEntity.selectedCols([
-    UserProfileEntity.email,
-    UserProfileEntity.name,
-  ]);
+  // final List<String> cols = UserProfileEntity.selectedCols([
+  //   UserProfileEntity.email,
+  //   UserProfileEntity.name,
+  // ]);
+  final List<String> cols = UserProfileEntity.singleCols;
   FutureOr<void> _onLearnSaveEventFormSubmitted(
       LearnSaveEventFormSubmitted event, Emitter<LearnSaveState> emit) async {
     emit(state.copyWith(status: LearnSaveStateStatus.loading));

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/app_icon.dart';
+import '../../utils/app_icon.dart';
 
 class PersonTile extends StatelessWidget {
   final String? community;
@@ -9,17 +9,19 @@ class PersonTile extends StatelessWidget {
   final String email;
   final String? id;
   final String? uid;
-  final Widget? trailingIconButton;
+  final Widget? trailing;
+  VoidCallback? onTap;
 
-  const PersonTile({
+  PersonTile({
     Key? key,
-    required this.community,
-    required this.displayName,
-    required this.photoURL,
     required this.email,
+    this.community,
+    this.displayName,
+    this.photoURL,
     this.id,
     this.uid,
-    this.trailingIconButton,
+    this.trailing,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -42,7 +44,8 @@ class PersonTile extends StatelessWidget {
       subtitle: Text(
         '$email\n${community ?? "..."}',
       ),
-      // trailing: trailingIconButton,
+      trailing: trailing,
+      onTap: onTap,
     );
   }
 }

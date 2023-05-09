@@ -50,7 +50,7 @@ class LearnListBloc extends Bloc<LearnListEvent, LearnListState> {
         Pagination(page: 1, limit: 100),
         cols,
       );
-
+      print('listTemp: $listTemp');
       emit(state.copyWith(
         status: LearnListStateStatus.success,
         list: listTemp,

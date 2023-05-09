@@ -12,7 +12,7 @@ import 'bloc/learn_phrases_bloc.dart';
 import 'bloc/learn_phrases_event.dart';
 import 'bloc/learn_phrases_state.dart';
 import 'categories_byperson_page.dart';
-import 'comp/person_tile.dart';
+import '../comp/person_tile.dart';
 
 class LearnPhrasesPage extends StatelessWidget {
   final UserProfileModel person;
