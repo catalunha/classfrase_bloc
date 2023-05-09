@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/authentication/bloc/authentication_bloc.dart';
 import '../../../core/models/user_profile_model.dart';
 import '../../../core/repositories/learn_repository.dart';
-import '../comp/person_tile.dart';
+import '../comp/person_card.dart';
 import '../save/learn_save_page.dart';
 import 'bloc/learn_list_bloc.dart';
 import 'bloc/learn_list_event.dart';
@@ -78,7 +78,7 @@ class LearnListView extends StatelessWidget {
                     itemCount: list.length,
                     itemBuilder: (context, index) {
                       final item = list[index];
-                      return PersonTile(
+                      return PersonCard(
                         community: item.person.community,
                         displayName: item.person.name,
                         photoURL: item.person.photo,

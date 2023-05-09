@@ -2,11 +2,11 @@ import 'package:classfrase_bloc/app/feature/phrase/list/bloc/phrase_list_event.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/models/phrase_model.dart';
-import '../../utils/app_icon.dart';
-import 'bloc/phrase_list_bloc.dart';
-import 'bloc/phrase_list_state.dart';
-import 'comp/phrase_card.dart';
+import '../../../../core/models/phrase_model.dart';
+import '../../../utils/app_icon.dart';
+import '../bloc/phrase_list_bloc.dart';
+import '../bloc/phrase_list_state.dart';
+import 'comp/phrase_archived_card.dart';
 
 class PhrasesArchivedPage extends StatelessWidget {
   const PhrasesArchivedPage({
@@ -53,7 +53,7 @@ class PhrasesArchivedPage extends StatelessWidget {
     for (var phrase in phraseArchivedList) {
       list.add(Container(
         key: ValueKey(phrase),
-        child: PhraseCard(
+        child: PhraseArchivedCard(
           phrase: phrase,
           widgetList: [
             IconButton(

@@ -32,14 +32,6 @@ class _CategoriesByPersonPageState extends State<CategoriesByPersonPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Container(
-              //   padding: const EdgeInsets.only(left: 10, right: 10),
-              //   color: Colors.black12,
-              //   child: const Text('Filtros e ações: '),
-              // ),
-              // const SizedBox(
-              //   width: 10,
-              // ),
               Tooltip(
                 message: 'Classificações encontradas na NGB e outras',
                 child: BlocBuilder<CatClassBloc, CatClassState>(

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/models/phrase_model.dart';
-import '../../../utils/app_icon.dart';
+import '../../../../../core/models/phrase_model.dart';
+import '../../../../utils/app_icon.dart';
 
-class PhraseCard extends StatelessWidget {
+class PhraseArchivedCard extends StatelessWidget {
   final PhraseModel phrase;
   final List<Widget>? widgetList;
   // final Widget? trailing;
   final bool isPublic;
-  const PhraseCard({
+  const PhraseArchivedCard({
     Key? key,
     required this.phrase,
     this.widgetList,
