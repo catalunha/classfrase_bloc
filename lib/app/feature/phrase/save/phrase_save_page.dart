@@ -177,6 +177,19 @@ class _PhraseSaveViewState extends State<PhraseSaveView> {
                         controller: _noteTEC,
                         maxLines: 3,
                       ),
+                      // Row(
+                      //   children: [
+                      //     Switch(
+                      //       value: _isPublic,
+                      //       onChanged: (value) {
+                      //         setState(() {
+                      //           _isPublic = value;
+                      //         });
+                      //       },
+                      //     ),
+                      //     const Text("Esta frase é pública ?"),
+                      //   ],
+                      // ),
                       CheckboxListTile(
                         title: const Text("Esta frase é pública ?"),
                         onChanged: (value) {
