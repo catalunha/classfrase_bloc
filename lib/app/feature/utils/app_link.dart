@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'app_icon.dart';
-import 'app_launch.dart';
 
 class AppLink extends StatelessWidget {
   final String? url;
@@ -20,7 +20,12 @@ class AppLink extends StatelessWidget {
         ? IconButton(
             tooltip: tooltipMsg,
             onPressed: () async {
-              AppLaunch.launchLink(url!);
+              try {
+                final Uri uri = Uri.parse(url!);
+                await launchUrl(uri);
+              } catch (e) {
+                //
+              }
             },
             icon: Icon(icon))
         : Container(

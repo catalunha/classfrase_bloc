@@ -7,8 +7,8 @@ class AppLaunch {
   }
 
   static void _launchUri(Uri uri) async {
-    if (!await launchUrl(uri)) {
-      throw 'Could not launch $uri';
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     }
   }
 

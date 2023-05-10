@@ -28,17 +28,18 @@ class PersonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: photoURL == null
-            ? const SizedBox(
-                height: 58, width: 58, child: Icon(AppIconData.undefined))
-            : ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  photoURL!,
-                  height: 58,
-                  width: 58,
-                ),
-              ),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.network(
+            photoURL ?? '',
+            height: 58,
+            width: 58,
+            errorBuilder: (_, a, b) {
+              return const SizedBox(
+                  height: 58, width: 58, child: Icon(AppIconData.undefined));
+            },
+          ),
+        ),
         title: Text(
           displayName ?? 'Nome não informado',
         ),

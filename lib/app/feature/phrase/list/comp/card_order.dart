@@ -23,92 +23,95 @@ class CardOrder extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.95,
       child: Card(
-          key: ValueKey(phrase),
-          color: phrase.isPublic! ? Colors.black : null,
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+        key: ValueKey(phrase),
+        color: phrase.isPublic! ? Colors.black : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              phrase.phrase,
+              style: const TextStyle(fontSize: 18, color: Colors.cyan),
+            ),
+            Text(
+              'Fonte: ${phrase.font}',
+            ),
+            Wrap(
               children: [
-                Text(
-                  phrase.phrase,
-                  style: const TextStyle(fontSize: 18, color: Colors.cyan),
+                IconButton(
+                    tooltip: 'Classificar esta frase',
+                    icon: const Icon(AppIconData.letter),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: BlocProvider.of<PhraseListBloc>(context),
+                            child: ClassifyingPage(model: phrase),
+                          ),
+                        ),
+                      );
+                    }),
+                IconButton(
+                  tooltip: 'PDF da classificação desta frase.',
+                  icon: const Icon(AppIconData.print),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/pdf', arguments: {
+                      'phrase': phrase,
+                      'categoryAll':
+                          context.read<CatClassBloc>().state.categoryAll,
+                    });
+                  },
                 ),
-                Text(
-                  'Fonte: ${phrase.font}',
+                IconButton(
+                    tooltip: 'Arquivar esta frase',
+                    icon: const Icon(AppIconData.inbox),
+                    onPressed: () {
+                      context.read<PhraseListBloc>().add(
+                          PhraseListEventIsArchived(
+                              phraseId: phrase.id!, isArchived: true));
+                    }),
+                AppLink(
+                  url: phrase.diagramUrl,
+                  icon: AppIconData.diagram,
+                  tooltipMsg: 'Ver diagrama desta frase',
                 ),
-                Wrap(
-                  children: [
-                    IconButton(
-                        tooltip: 'Classificar esta frase',
-                        icon: const Icon(AppIconData.letter),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: BlocProvider.of<PhraseListBloc>(context),
-                                child: ClassifyingPage(model: phrase),
-                              ),
-                            ),
-                          );
-                        }),
-                    IconButton(
-                      tooltip: 'PDF da classificação desta frase.',
-                      icon: const Icon(AppIconData.print),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('/pdf', arguments: {
-                          'phrase': phrase,
-                          'categoryAll':
-                              context.read<CatClassBloc>().state.categoryAll,
-                        });
-                      },
-                    ),
-                    AppLink(
-                      url: phrase.diagramUrl,
-                      icon: AppIconData.diagram,
-                      tooltipMsg: 'Ver diagrama desta frase',
-                    ),
-                    IconButton(
-                      tooltip: 'Copiar a frase para área de transferência.',
-                      icon: const Icon(AppIconData.copy),
-                      onPressed: () {
-                        Future<void> _copyToClipboard() async {
-                          await Clipboard.setData(
-                              ClipboardData(text: phrase.phrase));
-                        }
+                IconButton(
+                  tooltip: 'Copiar a frase para área de transferência.',
+                  icon: const Icon(AppIconData.copy),
+                  onPressed: () {
+                    Future<void> copyToClipboard() async {
+                      await Clipboard.setData(
+                          ClipboardData(text: phrase.phrase));
+                    }
 
-                        _copyToClipboard();
-                        const snackBar =
-                            SnackBar(content: Text('Ok. A frase foi copiada.'));
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      },
-                    ),
-                    IconButton(
-                        tooltip: 'Editar esta frase',
-                        icon: const Icon(AppIconData.edit),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: BlocProvider.of<PhraseListBloc>(context),
-                                child: PhraseSavePage(model: phrase),
-                              ),
-                            ),
-                          );
-
-                          // Navigator.of(context)
-                          //     .pushNamed('/phrase/save', arguments: phrase);
-                        }),
-                    IconButton(
-                        tooltip: 'Arquivar esta frase',
-                        icon: const Icon(AppIconData.inbox),
-                        onPressed: () {
-                          context.read<PhraseListBloc>().add(
-                              PhraseListEventIsArchived(
-                                  phraseId: phrase.id!, isArchived: true));
-                        }),
-                  ],
+                    copyToClipboard();
+                    const snackBar =
+                        SnackBar(content: Text('Ok. A frase foi copiada.'));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
                 ),
-              ])),
+                IconButton(
+                  tooltip: 'Editar esta frase',
+                  icon: const Icon(AppIconData.edit),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: BlocProvider.of<PhraseListBloc>(context),
+                          child: PhraseSavePage(model: phrase),
+                        ),
+                      ),
+                    );
+
+                    // Navigator.of(context)
+                    //     .pushNamed('/phrase/save', arguments: phrase);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
