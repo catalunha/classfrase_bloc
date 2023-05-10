@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/category_classification/bloc/cat_class_bloc.dart';
+import '../../../core/models/phrase_model.dart';
 import 'bloc/phrase_list_bloc.dart';
 import 'bloc/phrase_list_state.dart';
 import 'comp/alphabetic_order.dart';
@@ -45,7 +46,7 @@ class PhraseList extends StatelessWidget {
             if (state.isSortedByFolder) {
               return FolderOrder(
                   phraseList: state.list,
-                  cardOrder: (value) {
+                  cardOrder: (PhraseModel value) {
                     return CardOrder(
                       phrase: value,
                     );

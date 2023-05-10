@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 import '../../../core/models/learn_model.dart';
@@ -37,7 +39,8 @@ class LearnB4a {
       } else {
         return [];
       }
-    } on Exception {
+    } catch (e, s) {
+      log('Erro em LearnB4a.list', error: e, stackTrace: s);
       var errorTranslated =
           ParseErrorTranslate.translate(parseResponse!.error!);
       throw B4aException(
