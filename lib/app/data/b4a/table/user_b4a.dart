@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 // import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
@@ -137,10 +138,13 @@ class UserB4a {
   }
 
   Future<UserModel?> hasUserLogged() async {
+    log('+++ hasUserLogged');
     var parseUser = await ParseUser.currentUser() as ParseUser?;
     if (parseUser == null) {
       return null;
     }
+    log('+++ hasUserLogged $parseUser');
+
     //Checks whether the user's session token is valid
     final ParseResponse? parseResponse =
         await ParseUser.getCurrentUserFromServer(parseUser.sessionToken!);
